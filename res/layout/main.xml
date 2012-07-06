@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="2">
+    	<TableRow>
+    		<TextView
+				android:id="@+id/latitude"  
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content"
+			    android:gravity="left"
+			    android:text="latitude:"
+		    />
+    		<TextView
+				android:id="@+id/longitude"  
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="left"
+			    android:text="longitude:"
+		    />
+    	</TableRow>
+    	<TableRow>
+	    	<TextView
+				android:id="@+id/maxlatitude"
+				android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="left"
+			    android:text="maxlatitude:"
+			/>
+    	
+    		<TextView
+				android:id="@+id/maxlongitude"
+				android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="left"
+			    android:text="maxlongitude"
+			/>
+    	</TableRow>
+    	
+    	
+    	
+    	<TableRow>
+    		<TextView
+    			android:layout_column="0"
+				android:id="@+id/speed"
+				android:gravity="right"
+				android:textSize="151sp"
+			    android:text="000"
+		    	android:padding="3dip" />
+		   	/>
+		   	<TextView
+		   		android:layout_column="1"
+		   		android:id="@+id/kmh"
+				android:textSize="51sp"
+				android:gravity="right"
+				android:text="km/h"
+				android:textStyle="bold" 
+		    	android:padding="3dip" />
+   			/>
+    	</TableRow>
+    	<TableRow>
+	    	<TextView
+    			android:id="@+id/maxSpeed"  
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:textSize="23sp"
+			    android:text="max= 0 km/h"
+		    	android:gravity="right|top"/>
+		    
+    	</TableRow>
+    	
+</TableLayout>
