@@ -19,8 +19,6 @@ import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,9 +129,7 @@ public class Saree3 extends Activity {
         	AlertDialog alert = builder.create();
         	alert.show();
         }//else
-        
-        fadingText();
-            	
+           	
 	}
 
 		
@@ -240,16 +236,6 @@ public class Saree3 extends Activity {
 	}
 	
 	
-	public void fadingText() {
-		final Animation out = new AlphaAnimation(1.0f, 0.0f);
-        out.setDuration(3000);
-
-        latitude.startAnimation(out);
-    	longitude.startAnimation(out);
-    	maxlatitude.startAnimation(out);
-    	maxlongitude.startAnimation(out);
-	}
-	
 	public class MyLocationListener implements LocationListener{
 
 		public void onLocationChanged(Location loc) {
@@ -262,8 +248,6 @@ public class Saree3 extends Activity {
     				maxLong = "" + loc.getLongitude();
     				maxlatitude.setText("maxlatitude: " + maxLat);
     				maxlongitude.setText("maxlongitude: " + maxLong);
-    				
-    				fadingText();
     				
     				//Get a reference to the NotificationManager:
     				String ns = Context.NOTIFICATION_SERVICE;
@@ -305,7 +289,6 @@ public class Saree3 extends Activity {
 	    		latitude.setText("latitude: " + loc.getLatitude());
 				longitude.setText("longitude: " + loc.getLongitude());
 				
-				fadingText();
 			}//else
 			
 			
