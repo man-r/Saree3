@@ -1,4 +1,4 @@
-package com.vasa.Saree3;
+package com.man_r.Saree3;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
-import com.vasa.Saree3.R;
+import com.man_r.Saree3.R;
 
 import android.content.Context;
 import android.content.Intent;
