@@ -102,14 +102,15 @@ public class Saree3 extends Activity {
 		locationListener = new MyLocationListener();
                 
         final Criteria criteria = new Criteria();
+        
         criteria.setSpeedRequired(true);
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAccuracy(Criteria.ACCURACY_LOW);
         
         String bestProvider = locationManager.getBestProvider(criteria, true);
        
         if ((bestProvider != null) && (bestProvider.contains("gps"))){
         	max.setText("NO Signal !");
-        	locationManager.requestLocationUpdates(bestProvider, 17, 0, locationListener);
+        	locationManager.requestLocationUpdates(bestProvider, 500, 0, locationListener);
         }//if(bestProvider != null)
         else{
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
