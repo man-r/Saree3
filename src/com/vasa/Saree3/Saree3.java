@@ -1,4 +1,4 @@
-package com.man_r.Saree3;
+package com.vasa.Saree3;
 
 import android.app.Activity;
 import android.app.AlertDialog;

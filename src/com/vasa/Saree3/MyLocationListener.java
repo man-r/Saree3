@@ -1,6 +1,6 @@
-package com.man_r.Saree3;
+package com.vasa.Saree3;
 
-import com.man_r.Saree3.R;
+import com.vasa.Saree3.R;
 
 import android.app.Activity;
 import android.app.Notification;
