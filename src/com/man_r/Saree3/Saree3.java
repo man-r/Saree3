@@ -279,7 +279,7 @@ public class Saree3 extends Activity {
 				else if (speed < 100)
 					speedText.setText("0" + speed);
 				else
-					speedText.setText(speed);
+					speedText.setText("" + speed);
 				
     			max.setText("max= " + maxSpeed + " Km/h");
     			
