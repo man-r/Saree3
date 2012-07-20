@@ -124,7 +124,13 @@ public class Saree3 extends Activity {
         	       })
         	       .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
         	           public void onClick(DialogInterface dialog, int id) {
-        	               finish();
+        	        	   locationManager.removeUpdates(locationListener);
+           	       		
+	        	       	   String ns = Context.NOTIFICATION_SERVICE;
+	        	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+	        	       	   mNotificationManager.cancel(3);
+        	       		
+        	        	   finish();
         	           }
         	       });
         	AlertDialog alert = builder.create();
