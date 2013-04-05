@@ -47,7 +47,8 @@ public class Saree3 extends Activity {
 	protected PowerManager.WakeLock mWakeLock;
 	
     /** Called when the activity is first created. */
-    @SuppressWarnings("deprecation")
+    @SuppressLint("Wakelock")
+	@SuppressWarnings("deprecation")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -154,18 +155,6 @@ public class Saree3 extends Activity {
         return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onDestroy()
-	 */
-	@SuppressLint("Wakelock")
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		
-		
-		this.mWakeLock.release();
-		super.onDestroy();
-	}
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
@@ -182,6 +171,7 @@ public class Saree3 extends Activity {
         	           public void onClick(DialogInterface dialog, int id) {
         	        	   
         	        	   locationManager.removeUpdates(locationListener);
+        	        	   mWakeLock.release();
         	       		
 	        	       	   String ns = Context.NOTIFICATION_SERVICE;
 	        	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
@@ -297,11 +287,13 @@ public class Saree3 extends Activity {
 			}//if(loc.hasSpeed())
 			
 			else{
-				max.setText("No Signal !");
-	    		latitude.setText("latitude: " + loc.getLatitude());
-				longitude.setText("longitude: " + loc.getLongitude());
-				
+				max.setText("No Speed Data !");
 			}//else
+	    		
+			latitude.setText("latitude: " + loc.getLatitude());
+			longitude.setText("longitude: " + loc.getLongitude());
+				
+			
 			
 			
 			
