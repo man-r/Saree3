@@ -1,5 +1,6 @@
 package com.vasa.Saree3;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -46,7 +47,8 @@ public class Saree3 extends Activity {
 	protected PowerManager.WakeLock mWakeLock;
 	
     /** Called when the activity is first created. */
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -94,6 +96,7 @@ public class Saree3 extends Activity {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onStart()
 	 */
+	@SuppressLint({ "InlinedApi", "NewApi" })
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
@@ -104,7 +107,7 @@ public class Saree3 extends Activity {
         final Criteria criteria = new Criteria();
         
         criteria.setSpeedRequired(true);
-        criteria.setAccuracy(Criteria.ACCURACY_LOW);
+        criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
         
         String bestProvider = locationManager.getBestProvider(criteria, true);
        
@@ -154,6 +157,7 @@ public class Saree3 extends Activity {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onDestroy()
 	 */
+	@SuppressLint("Wakelock")
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
@@ -245,6 +249,7 @@ public class Saree3 extends Activity {
 	
 	public class MyLocationListener implements LocationListener{
 
+		@SuppressWarnings("deprecation")
 		public void onLocationChanged(Location loc) {
 			// TODO Auto-generated method stub
 			if(loc.hasSpeed()){

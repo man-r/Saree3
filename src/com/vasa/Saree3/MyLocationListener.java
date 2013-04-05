@@ -22,6 +22,7 @@ public class MyLocationListener extends Activity implements LocationListener {
 	int maxSpeed=0;
 	int speed=0;
 	
+	@SuppressWarnings("deprecation")
 	public void onLocationChanged(Location loc) {
 		// TODO Auto-generated method stub
 		if(loc.hasSpeed()){
