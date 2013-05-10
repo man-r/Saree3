@@ -1,5 +1,6 @@
 package com.vasa.Saree3;
 
+import com.vasa.Mongo.MongoPost;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,6 +10,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
@@ -20,18 +23,40 @@ import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Saree3 extends Activity {
 
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// TODO Auto-generated method stub
+		super.onConfigurationChanged(newConfig);
+		 
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
+        // Checks whether a hardware keyboard is available
+        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+            Toast.makeText(this, "keyboard visible", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
+        }
+	}
+
 	TextView latitude;
 	TextView longitude;
-	TextView maxlatitude;
-	TextView maxlongitude;
 	TextView speedText;
 	TextView kmh;
 	TextView max;
+	
 	
 	String maxLat="";
 	String maxLong = "";
@@ -43,12 +68,16 @@ public class Saree3 extends Activity {
     
 	LocationManager locationManager;
 	LocationListener locationListener;
+	Criteria criteria;
+	
+	SharedPreferences topSpeed;
 	
 	protected PowerManager.WakeLock mWakeLock;
 	
     /** Called when the activity is first created. */
-    @SuppressLint("Wakelock")
+    
 	@SuppressWarnings("deprecation")
+	@SuppressLint("InlinedApi")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -56,22 +85,41 @@ public class Saree3 extends Activity {
         
         latitude = (TextView)findViewById(R.id.latitude);
     	longitude = (TextView)findViewById(R.id.longitude);
-    	maxlatitude = (TextView)findViewById(R.id.maxlatitude);
-    	maxlongitude = (TextView)findViewById(R.id.maxlongitude);
     	speedText = (TextView)findViewById(R.id.speed);
     	kmh = (TextView)findViewById(R.id.kmh);
     	max = (TextView)findViewById(R.id.maxSpeed);
     	
+    	latitude.setOnClickListener(textClick);
+    	longitude.setOnClickListener(textClick);
+    	speedText.setOnClickListener(textClick);
+    	kmh.setOnClickListener(textClick);
+    	max.setOnClickListener(textClick);
+    	
+    	
+    	kmh.setText("");       
+    	
+        topSpeed = this.getSharedPreferences("topspeed", Context.MODE_PRIVATE);
+		maxSpeed = topSpeed.getInt("topspeed",0);
+		maxLat = topSpeed.getString("lat", "0");
+		maxLong  = topSpeed.getString("long", "0");
+		
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationListener = new MyLocationListener();
+		criteria = new Criteria();
+        
+        criteria.setSpeedRequired(true);
+        criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
         Typeface font = Typeface.createFromAsset(getAssets(), "d10re.ttf");
-        speedText.setTypeface(font);
-        max.setTypeface(font);
-        kmh.setTypeface(font);
+        ((TextView)findViewById(R.id.speed)).setTypeface(font);
+        ((TextView)findViewById(R.id.maxSpeed)).setTypeface(font);
+        ((TextView)findViewById(R.id.kmh)).setTypeface(font);
         
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
         
-      //Get a reference to the NotificationManager:
+      
+        //Get a reference to the NotificationManager:
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(ns);
 		
@@ -91,31 +139,25 @@ public class Saree3 extends Activity {
 		
 		//Pass the Notification to the NotificationManager
 		mNotificationManager.notify(3, notification);
-        
-    }//onCreate
+		
+		latitude.setText("latitude: " + maxLat);
+    	longitude.setText("longitude: " + maxLong);
+    	speedText.setText("" + maxSpeed);
+    }
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStart()
-	 */
-	@SuppressLint({ "InlinedApi", "NewApi" })
+	
+
+    @SuppressLint({ "InlinedApi", "NewApi" })
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		locationListener = new MyLocationListener();
-                
-        final Criteria criteria = new Criteria();
-        
-        criteria.setSpeedRequired(true);
-        criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
-        
+		        
         String bestProvider = locationManager.getBestProvider(criteria, true);
        
         if ((bestProvider != null) && (bestProvider.contains("gps"))){
-        	max.setText("NO Signal !");
-        	locationManager.requestLocationUpdates(bestProvider, 500, 0, locationListener);
-        }//if(bestProvider != null)
+        	locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+        }
         else{
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
         	builder.setMessage("No GPS!")
@@ -139,14 +181,12 @@ public class Saree3 extends Activity {
         	       });
         	AlertDialog alert = builder.create();
         	alert.show();
-        }//else
+        }
            	
+        //Toast.makeText(getApplicationContext(), "onStart", Toast.LENGTH_LONG).show();
 	}
 
 		
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
@@ -156,16 +196,13 @@ public class Saree3 extends Activity {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		switch(item.getItemId()){
 		case R.id.close:
-        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        	builder.setMessage("Are you sure you want to exit?")
+        	AlertDialog.Builder closebuilder = new AlertDialog.Builder(this);
+        	closebuilder.setMessage("Are you sure you want to exit?")
         	       .setCancelable(false)
         	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
         	           public void onClick(DialogInterface dialog, int id) {
@@ -185,13 +222,8 @@ public class Saree3 extends Activity {
         	                dialog.cancel();
         	           }
         	       });
-        	AlertDialog alert = builder.create();
+        	AlertDialog alert = closebuilder.create();
         	alert.show();
-        	break;
-        	
-		case R.id.mapLayout:
-        	Intent myIntent = new Intent(getApplicationContext(), Map.class);
-            startActivityForResult(myIntent, 0);
         	break;
         	
 		case R.id.GPSSwitch:
@@ -199,18 +231,38 @@ public class Saree3 extends Activity {
             startActivity(switchIntent);        
             break;
             
-        case R.id.chalange:
+        case R.id.share:
         	shareIt();
-        	//Intent intent = new Intent(Intent.ACTION_PICK);
-        	//intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-        	//startActivityForResult(intent, 3);
         	break;
         	
+        case R.id.chalange:
+        	final EditText textBox = new EditText(this);
+        	AlertDialog.Builder chalangebuilder = new AlertDialog.Builder(this);
+        	chalangebuilder.setMessage("enter your name?")
+        	       .setCancelable(false)
+        	       .setView(textBox)
+        	       .setPositiveButton("post", new DialogInterface.OnClickListener() {
+        	           public void onClick(DialogInterface dialog, int id) {
+        	        	   chalenge(textBox.getText().toString());
+        	           }
+        	       })
+        	       .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        	           public void onClick(DialogInterface dialog, int id) {
+        	                dialog.cancel();
+        	           }
+        	       });
+        	AlertDialog chalangealert = chalangebuilder.create();
+        	chalangealert.show();
+        	break;
+        	
+        case R.id.top:
+        	Intent topIntent = new Intent(getApplicationContext(), TopTen.class);
+            startActivityForResult(topIntent, 0);
+            break;
         default:
             break;
         	
-		}//switch(item.getItemId())
-		//return super.onOptionsItemSelected(item);
+		}
 		return true;
 	}
     
@@ -223,7 +275,7 @@ public class Saree3 extends Activity {
 	
 	public void shareIt() {
 				
-		String message = "can you beet me:\n";
+		String message = "my top speed is:\n";
     	message = message + "speed:" + maxSpeed + "\n";
     	message = message + "http://maps.google.com/maps?q=" + maxLat + "," + maxLong + "\n";
     	message = message + "this message is sent from saree3";
@@ -236,21 +288,60 @@ public class Saree3 extends Activity {
 		startActivity(Intent.createChooser(sharingIntent, "Share via"));
 	}
 	
+	public void chalenge(String name) {
+		
+		String url = "https://api.mongolab.com/api/1/databases/saree3/collections/saree3?apiKey=bte7Wf-HKy9jhmrjKqHaN45tzdy_08EA";
+		
+		String jsonString = "{"
+		        + "  \"device\": \"" + name + "\", "
+		        + "  \"speed\": \"" + maxSpeed + "\", "
+		        + "  \"location\": {"
+		        	+ " \"lat\": " + maxLat + ", "
+		        	+ " \"long\": " + maxLong
+		        	+ "}"
+		        + "}";
+		
+		new MongoPost().execute(url, jsonString);
+		Toast.makeText(getApplicationContext(), "Data is uploded", Toast.LENGTH_SHORT).show();
+	}
+	
+	public OnClickListener textClick = new OnClickListener () {
+
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			String state = max.getText().toString();
+			if (state.equals("maxSpeed")) {
+				max.setText("currentSpeed");
+				latitude.setText("latitude:");
+				longitude.setText("longitude:");
+		    	speedText.setText("0");
+		    }
+			else if (state.equals("currentSpeed")) {
+				max.setText("maxSpeed");
+				latitude.setText("latitude: " + maxLat);
+		    	longitude.setText("longitude: " + maxLong);
+		    	speedText.setText("" + maxSpeed);
+			}
+		}
+		
+	};
 	
 	public class MyLocationListener implements LocationListener{
 
+		@SuppressLint("NewApi")
 		@SuppressWarnings("deprecation")
 		public void onLocationChanged(Location loc) {
 			// TODO Auto-generated method stub
 			if(loc.hasSpeed()){
+				String state = max.getText().toString();
 				speed = (int) (loc.getSpeed()* 3.6);
 				if(speed>maxSpeed){
 					maxSpeed=speed;
     				maxLat = "" + loc.getLatitude();
     				maxLong = "" + loc.getLongitude();
-    				maxlatitude.setText("maxlatitude: " + maxLat);
-    				maxlongitude.setText("maxlongitude: " + maxLong);
     				
+    				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
+					
     				//Get a reference to the NotificationManager:
     				String ns = Context.NOTIFICATION_SERVICE;
     				NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(ns);
@@ -271,32 +362,30 @@ public class Saree3 extends Activity {
     				
     				//Pass the Notification to the NotificationManager
     				mNotificationManager.notify(3, notification);
-				}//if(speed>maxSpeed)
-				
-				if (speed == 0)
-					speedText.setText("000");
-				else if (speed < 10)
-					speedText.setText("00" + speed);
-				else if (speed < 100)
-					speedText.setText("0" + speed);
-				else
-					speedText.setText("" + speed);
-				
-    			max.setText("max= " + maxSpeed + " Km/h");
+    				
+    				if (state.equals("maxSpeed")) {
+    					speedText.setText("" + speed);
+    				}
+    				
+    				latitude.setText("latitude: " + loc.getLatitude());
+    				longitude.setText("longitude: " + loc.getLongitude());
+    				
+				}
+				else {
+					if (state.equals("currentSpeed")) {
+    					speedText.setText("" + speed);
+    					latitude.setText("latitude: " + loc.getLatitude());
+        				longitude.setText("longitude: " + loc.getLongitude());
+        				
+    				}
+    				
+				}
     			
-			}//if(loc.hasSpeed())
+			}
 			
 			else{
 				max.setText("No Speed Data !");
-			}//else
-	    		
-			latitude.setText("latitude: " + loc.getLatitude());
-			longitude.setText("longitude: " + loc.getLongitude());
-				
-			
-			
-			
-			
+			}		
 			
 		}
 

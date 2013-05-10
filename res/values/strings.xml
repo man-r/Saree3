@@ -2,4 +2,14 @@
 <resources>
     <string name="hello">Hello World, Saree3!</string>
     <string name="app_name">Saree3</string>
+    <string name="latitude">latitude:</string>
+    <string name="longitude">longitude:</string>
+    <string name="speed">0</string>
+    <string name="kmh">km/h</string>
+    <string name="maxspeed">maxSpeed</string>
+    <string name="close">close</string>
+    <string name="gpsswitch">GPS Switch</string>
+    <string name="map">map</string>
+    <string name="share">share</string>
+    <string name="chalange">chalange</string>
 </resources>
