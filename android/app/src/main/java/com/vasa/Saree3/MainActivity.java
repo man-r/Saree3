@@ -38,9 +38,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.app.NotificationChannel;
+import android.os.Build;
+
 public class MainActivity extends Activity {
 	
 	public static final String TAG = "manar";
+
+	public static final String CHANNEL_ID = "manar";
 
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final int GET_PERMISSION_REQUEST = 2;  // The request code
@@ -123,38 +130,30 @@ public class MainActivity extends Activity {
 		criteria.setSpeedRequired(true);
 		criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
         
-        // Typeface font = Typeface.createFromAsset(getAssets(), "d10re.ttf");
-        // ((TextView)findViewById(R.id.speed)).setTypeface(font);
-        // ((TextView)findViewById(R.id.maxSpeed)).setTypeface(font);
-        // ((TextView)findViewById(R.id.kmh)).setTypeface(font);
-        
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
+
+
         
-      
-        //Get a reference to the NotificationManager:
-		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(ns);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        .setSmallIcon(R.drawable.notification_icon)
+        .setContentTitle("Saree3")
+        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+        .setStyle(new NotificationCompat.BigTextStyle()
+        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setOnlyAlertOnce(true)
+        .setOngoing(false);
+
+        
+		// notificationId is a unique int for each notification that you must define
+		NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+		notificationManager.notify(3, mBuilder.build());
 		
-		Notification notification = new Notification();
-		notification.flags = Notification.FLAG_ONGOING_EVENT;
-		notification.number = maxSpeed;
-		notification.icon = R.drawable.notification_icon;
-		notification.tickerText = "Saree3";
-		
-		//Define the notification message and PendingIntent
-		CharSequence contentTitle = "Saree3";
-		CharSequence contentText = "maxSpeed= " + maxSpeed + " Km/h";
-		Intent notificationIntent = new Intent(this, MainActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-		
-		//notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
-		
-		//Pass the Notification to the NotificationManager
-		mNotificationManager.notify(3, notification);
-		
-		latitude.setText("latitude: " + maxLat);
+
+        latitude.setText("latitude: " + maxLat);
     	longitude.setText("longitude: " + maxLong);
     	speedText.setText("" + maxSpeed);
 
@@ -250,26 +249,20 @@ public class MainActivity extends Activity {
     				
     				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
 					
-    				//Get a reference to the NotificationManager:
-    				String ns = Context.NOTIFICATION_SERVICE;
-    				NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(ns);
-    				
-    				Notification notification = new Notification();
-    				notification.flags = Notification.FLAG_ONGOING_EVENT;
-    				notification.number = maxSpeed;
-    				notification.icon = R.drawable.notification_icon;
-    				notification.tickerText = maxSpeed + "";
-    				
-    				//Define the notification message and PendingIntent
-    				CharSequence contentTitle = "Saree3";
-    				CharSequence contentText = "maxSpeed= " + maxSpeed + " Km/h";
-    				Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-    				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
-    				
-    				//notification.setLatestEventInfo(getApplicationContext(), contentTitle, contentText, contentIntent);
-    				
-    				//Pass the Notification to the NotificationManager
-    				mNotificationManager.notify(3, notification);
+    				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+			        .setSmallIcon(R.drawable.notification_icon)
+			        .setContentTitle("Saree3")
+			        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+			        .setStyle(new NotificationCompat.BigTextStyle()
+			        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
+			        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+			        .setOnlyAlertOnce(true)
+			        .setOngoing(false);
+
+			        
+					// notificationId is a unique int for each notification that you must define
+					NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+					notificationManager.notify(3, mBuilder.build());
     				
     				if (state.equals("maxSpeed")) {
     					speedText.setText("" + speed);
