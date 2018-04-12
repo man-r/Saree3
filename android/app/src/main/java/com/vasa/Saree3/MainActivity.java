@@ -54,8 +54,16 @@ public class MainActivity extends AppCompatActivity {
 	public static final String CHANNEL_ID = "manar";
 
     public static final String PREFS_NAME = "MyPrefsFile";
-    public static final int GET_PERMISSION_REQUEST = 2;  // The request code
-    public static final int REQUEST_CODE_EMAIL = 3;  // The request code
+    
+    private static final int ACCESS_NETWORK_STATE = 2;
+	private static final int ACCESS_FINE_LOCATION = 3;
+	private static final int WAKE_LOCK = 4;
+	private static final int INTERNET = 5;
+	private static final int READ_PHONE_STATE = 6;
+	private static final int WRITE_EXTERNAL_STORAGE = 7;
+	private static final int CAMERA = 8;
+	private static final int RECORD_AUDIO = 9;
+    //public static final int REQUEST_CODE_EMAIL = 3;  // The request code
 
     private DrawerLayout mDrawerLayout;
 
@@ -216,8 +224,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Intent intent = new Intent(getApplicationContext(), GetPermission.class);
-        // startActivityForResult(intent, GET_PERMISSION_REQUEST);
+        Intent intent = new Intent(getApplicationContext(), GetPermission.class);
+        intent.putExtra("permission", ACCESS_FINE_LOCATION);
+        startActivityForResult(intent, ACCESS_FINE_LOCATION);
 
         latitude = (TextView)findViewById(R.id.latitude);
     	longitude = (TextView)findViewById(R.id.longitude);
@@ -274,6 +283,56 @@ public class MainActivity extends AppCompatActivity {
     	speedText.setText("" + maxSpeed);
 
     }
+
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    switch(requestCode){
+			case ACCESS_NETWORK_STATE:
+	        	if (resultCode == RESULT_OK) {
+
+	        	}
+	        	break;
+	        	
+			case ACCESS_FINE_LOCATION:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+			case WAKE_LOCK:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+			case INTERNET:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+			case READ_PHONE_STATE:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+			case WRITE_EXTERNAL_STORAGE:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+			case CAMERA:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+			case RECORD_AUDIO:
+	        	if (resultCode == RESULT_OK) {
+	        		
+	        	}
+	        	break;
+	        default:
+	            break;
+	        	
+			}
+	}
 
     @Override
 	protected void onStart() {

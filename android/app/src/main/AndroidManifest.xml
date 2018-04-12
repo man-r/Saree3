@@ -46,6 +46,8 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".CameraActivity"></activity>
+
+        <activity android:name=".GetPermission"></activity>
     </application>
 
 </manifest>
