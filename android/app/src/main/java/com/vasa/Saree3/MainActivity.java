@@ -2,6 +2,9 @@ package com.vasa.Saree3;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.widget.TextView;
 import android.location.LocationListener;
@@ -42,8 +45,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.app.NotificationChannel;
 import android.os.Build;
+import android.support.design.widget.NavigationView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 	
 	public static final String TAG = "manar";
 
@@ -52,6 +56,8 @@ public class MainActivity extends Activity {
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final int GET_PERMISSION_REQUEST = 2;  // The request code
     public static final int REQUEST_CODE_EMAIL = 3;  // The request code
+
+    private DrawerLayout mDrawerLayout;
 
 	TextView latitude;
 	TextView longitude;
@@ -73,6 +79,9 @@ public class MainActivity extends Activity {
 	Criteria criteria;
 	
 	SharedPreferences topSpeed;
+	
+	AlertDialog.Builder closebuilder;
+	AlertDialog.Builder chalangebuilder;
 	
 	protected PowerManager.WakeLock mWakeLock;
 	
@@ -101,6 +110,112 @@ public class MainActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         
+        // Toolbar toolbar = findViewById(R.id.toolbar);
+        // setSupportActionBar(toolbar);
+        // final EditText textBox = );
+								
+        chalangebuilder = new AlertDialog.Builder(this);
+    	chalangebuilder.setMessage("enter your name?")
+    	       .setCancelable(false)
+    	       .setView(new EditText(this))
+    	       .setPositiveButton("post", new DialogInterface.OnClickListener() {
+    	           public void onClick(DialogInterface dialog, int id) {
+    	        	   // chalenge(textBox.getText().toString());
+    	           }
+    	       })
+    	       .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+    	           public void onClick(DialogInterface dialog, int id) {
+    	                dialog.cancel();
+    	           }
+    	       });
+    	
+    	closebuilder = new AlertDialog.Builder(this);
+        closebuilder.setMessage("Are you sure you want to exit?")
+	       .setCancelable(false)
+	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	        	   
+	        	   locationManager.removeUpdates(locationListener);
+	        	   mWakeLock.release();
+	       		
+    	       	   String ns = Context.NOTIFICATION_SERVICE;
+    	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+    	       	   mNotificationManager.cancel(3);
+	       		
+	        	   finish();
+	           }
+	       })
+	       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	                dialog.cancel();
+	           }
+	       });
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        switch(menuItem.getItemId()){
+							case R.id.close:
+					        	
+					        	AlertDialog alert = closebuilder.create();
+					        	alert.show();
+					        	break;
+					        	
+							case R.id.GPSSwitch:
+					        	Intent switchIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					            startActivity(switchIntent);        
+					            break;
+					            
+					        case R.id.share:
+					        	String message = "my top speed is:\n";
+								message = message + "speed:" + maxSpeed + "\n";
+								message = message + "http://maps.google.com/maps?q=" + maxLat + "," + maxLong + "\n";
+								message = message + "this message is sent from saree3";
+
+								Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+								sharingIntent.setType("text/plain");
+								sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "shareing subject");
+								sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+
+								startActivity(Intent.createChooser(sharingIntent, "Share via"));
+					        	break;
+					        	
+					        case R.id.chalange:
+					        	AlertDialog chalangealert = chalangebuilder.create();		        	
+					        	chalangealert.show();
+					        	break;
+					        	
+					        case R.id.top:
+					        	//Intent topIntent = new Intent(getApplicationContext(), TopTen.class);
+					            //startActivityForResult(topIntent, 0);
+					            break;
+					        case R.id.map:
+					        	Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
+					            startActivityForResult(mapIntent, 0);
+					            break;
+					        case R.id.camera:
+					        	Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
+					            startActivityForResult(cameraIntent, 0);
+					            break;
+					        default:
+					            break;
+					        	
+							}
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+
+                        return true;
+                    }
+                });
+
         // Intent intent = new Intent(getApplicationContext(), GetPermission.class);
         // startActivityForResult(intent, GET_PERMISSION_REQUEST);
 
@@ -144,7 +259,8 @@ public class MainActivity extends Activity {
         .setStyle(new NotificationCompat.BigTextStyle()
         .bigText("maxSpeed= " + maxSpeed + " Km/h"))
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setOnlyAlertOnce(true)
+        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+		.setOnlyAlertOnce(true)
         .setOngoing(false);
 
         
@@ -163,7 +279,7 @@ public class MainActivity extends Activity {
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		        
+		 
         String bestProvider = locationManager.getBestProvider(criteria, true);
        
         if ((bestProvider != null) && (bestProvider.contains("gps"))){
@@ -256,6 +372,7 @@ public class MainActivity extends Activity {
 			        .setStyle(new NotificationCompat.BigTextStyle()
 			        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
 			        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+			        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
 			        .setOnlyAlertOnce(true)
 			        .setOngoing(false);
 

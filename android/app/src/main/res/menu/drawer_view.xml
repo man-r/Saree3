@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:checkableBehavior="single">
+        <item 
+            android:id="@+id/GPSSwitch" 
+            android:icon="@drawable/notification_icon"
+            android:title="GPS switch" >
+        </item>
+        <item
+            android:id="@+id/share"
+            android:icon="@drawable/notification_icon"
+            android:title="share" >
+        </item>
+        <item
+            android:id="@+id/chalange"
+            android:icon="@drawable/notification_icon"
+            android:title="chalange" >
+        </item>
+        <item
+            android:id="@+id/top"
+            android:icon="@drawable/notification_icon"
+            android:title="chalangers list" >
+        </item>
+        <item
+            android:id="@+id/map"
+            android:icon="@drawable/notification_icon"
+            android:title="map" >
+        </item>
+        <item
+            android:id="@+id/camera"
+            android:icon="@drawable/notification_icon"
+            android:title="camera" >
+        </item>
+        <item
+            android:id="@+id/close"
+            android:icon="@drawable/notification_icon"
+            android:title="close" >
+        </item>
+    </group>
+</menu>
