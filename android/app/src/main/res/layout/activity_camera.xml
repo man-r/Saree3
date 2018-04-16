@@ -4,29 +4,27 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-
-
   
-
-
-<!-- <fragment 
-    android:name="com.google.android.gms.maps.MapFragment"
-    android:id="@+id/map"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/> -->
-
-<FrameLayout
-    android:id="@+id/camera_preview"
+    <SurfaceView 
+        android:id="@+id/camera_view"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_weight="1"
-    > 
-    <Button
-        android:id="@+id/button_capture"
-        android:text="Capture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
+    android:layout_weight="1" />
+
+  <Button
+    android:id="@+id/button_capture"
+    android:text="Capture"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
     />
-</FrameLayout>
+
+    <TextView
+        android:id="@+id/code_info"  
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="@string/latitude"
+        android:fontFamily="@font/digital"
+    />
 </LinearLayout>

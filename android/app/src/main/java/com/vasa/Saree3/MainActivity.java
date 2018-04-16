@@ -234,6 +234,10 @@ public class MainActivity extends AppCompatActivity {
     	kmh = (TextView)findViewById(R.id.kmh);
     	max = (TextView)findViewById(R.id.maxSpeed);
     	
+    	Typeface font = Typeface.createFromAsset(getAssets(), "d10re.ttf");
+        ((TextView)findViewById(R.id.speed)).setTypeface(font);
+        ((TextView)findViewById(R.id.maxSpeed)).setTypeface(font);
+        ((TextView)findViewById(R.id.kmh)).setTypeface(font);
     	latitude.setOnClickListener(textClick);
     	longitude.setOnClickListener(textClick);
     	speedText.setOnClickListener(textClick);
@@ -480,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
 			// TODO Auto-generated method stub
 			if(status!=2)
     			max.setText("No Gps !");
+    			Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
 		}
 		
 	}
