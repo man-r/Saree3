@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends FragmentActivity {
 
     private Camera mCamera;
     private CameraPreview mPreview;
