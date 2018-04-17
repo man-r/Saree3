@@ -17,6 +17,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiDetector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -31,6 +32,7 @@ public class CameraActivity extends AppCompatActivity {
     private SurfaceView cameraView;
     private TextView barcodeInfo;
     private TextView ocrInfo;
+    private TextView faceInfo;
 
     BarcodeDetector barcodeDetector;
     FaceDetector faceDetector;
@@ -79,6 +81,7 @@ public class CameraActivity extends AppCompatActivity {
         cameraView = (SurfaceView)findViewById(R.id.camera_view);
         barcodeInfo = (TextView)findViewById(R.id.code_info);
         ocrInfo = (TextView)findViewById(R.id.ocr_info);
+       	faceInfo = (TextView)findViewById(R.id.face_info);
 
         barcodeDetector = new BarcodeDetector.Builder(this).build();
         barcodeDetector.setProcessor(new Detector.Processor() {
@@ -122,7 +125,6 @@ public class CameraActivity extends AppCompatActivity {
                         	for(int i=0; i<textBlock.size(); i++){
                         		TextBlock item = textBlock.valueAt(i);
 		                    	if (item != null && item.getValue() != null) {
-		                    		Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
 		                    		ocrInfo.setText(textBlock.valueAt(i).getValue());
             					}
 		                    }
@@ -133,10 +135,33 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         faceDetector = new FaceDetector.Builder(this).build();
+        faceDetector.setProcessor(new Detector.Processor() {
+        	@Override 
+        	public void release() { }
 
+			@Override
+			public void receiveDetections(Detector.Detections detections) {
+				final SparseArray<Face> faces = detections.getDetectedItems();
+				if (faces.size() != 0) {
+
+                    faceInfo.post(new Runnable() {
+                        // Use the post method of the TextView
+                        public void run() {
+                        	for(int i=0; i<faces.size(); i++){
+                        		Face item = faces.valueAt(i);
+		                    	if (item != null) {
+		                    		faceInfo.setText(faces.valueAt(i).toString());
+            					}
+		                    }
+                        }
+                    });
+                }
+			}
+        });
         MultiDetector multiDetector = new MultiDetector.Builder()
         	.add(barcodeDetector)
         	.add(textRecognizer)
+        	.add(faceDetector)
         	.build();
         cameraSource = new CameraSource.Builder(this, multiDetector)
         		.setRequestedPreviewSize(640, 480)

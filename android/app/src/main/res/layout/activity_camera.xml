@@ -32,7 +32,15 @@
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="barcode"
+        android:text="ocr"
+        android:fontFamily="@font/digital"
+    />
+    <TextView
+        android:id="@+id/face_info"  
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="face"
         android:fontFamily="@font/digital"
     />
 </LinearLayout>
