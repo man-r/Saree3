@@ -24,7 +24,15 @@
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="@string/latitude"
+        android:text="barcode"
+        android:fontFamily="@font/digital"
+    />
+    <TextView
+        android:id="@+id/ocr_info"  
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="barcode"
         android:fontFamily="@font/digital"
     />
 </LinearLayout>

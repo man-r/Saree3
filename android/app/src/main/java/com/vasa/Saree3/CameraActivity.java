@@ -14,8 +14,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.MultiDetector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
 
@@ -26,8 +30,10 @@ public class CameraActivity extends AppCompatActivity {
 
     private SurfaceView cameraView;
     private TextView barcodeInfo;
+    private TextView ocrInfo;
 
     BarcodeDetector barcodeDetector;
+    FaceDetector faceDetector;
     CameraSource cameraSource;
 
 	private boolean checkCameraHardware(Context context) {
@@ -72,11 +78,9 @@ public class CameraActivity extends AppCompatActivity {
 
         cameraView = (SurfaceView)findViewById(R.id.camera_view);
         barcodeInfo = (TextView)findViewById(R.id.code_info);
+        ocrInfo = (TextView)findViewById(R.id.ocr_info);
 
-
-        barcodeDetector = new BarcodeDetector.Builder(this)
-        		.build();
-
+        barcodeDetector = new BarcodeDetector.Builder(this).build();
         barcodeDetector.setProcessor(new Detector.Processor() {
         	@Override 
         	public void release() { }
@@ -94,24 +98,49 @@ public class CameraActivity extends AppCompatActivity {
 		                    	int key = barcodes.keyAt(i);
 		                    	Log.d("Element at "+key, " is "+barcodes.get(key));
 		                    }
-                            barcodeInfo.setText( "found barcode" );
-                            barcodeInfo.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue
-                            );
+                            barcodeInfo.setText(barcodes.valueAt(0).displayValue);
                             
                         }
                     });
                 }
 			}
-
-
-            public void receiveDetections2(Detector.Detections<Barcode> detections) {
-                
-            }
         });
         
-        cameraSource = new CameraSource.Builder(this, barcodeDetector)
-        		.setRequestedPreviewSize(640, 480) 
+        TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
+        textRecognizer.setProcessor(new Detector.Processor() {
+        	@Override 
+        	public void release() { }
+
+			@Override
+			public void receiveDetections(Detector.Detections detections) {
+				final SparseArray<TextBlock> textBlock = detections.getDetectedItems();
+				if (textBlock.size() != 0) {
+
+                    ocrInfo.post(new Runnable() {
+                        // Use the post method of the TextView
+                        public void run() {
+                        	for(int i=0; i<textBlock.size(); i++){
+                        		TextBlock item = textBlock.valueAt(i);
+		                    	if (item != null && item.getValue() != null) {
+		                    		Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
+		                    		ocrInfo.setText(textBlock.valueAt(i).getValue());
+            					}
+		                    }
+                        }
+                    });
+                }
+			}
+        });
+
+        faceDetector = new FaceDetector.Builder(this).build();
+
+        MultiDetector multiDetector = new MultiDetector.Builder()
+        	.add(barcodeDetector)
+        	.add(textRecognizer)
+        	.build();
+        cameraSource = new CameraSource.Builder(this, multiDetector)
+        		.setRequestedPreviewSize(640, 480)
+        		.setAutoFocusEnabled(true)
         		.build();
 
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() { 
