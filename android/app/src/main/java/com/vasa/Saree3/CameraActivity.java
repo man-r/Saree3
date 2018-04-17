@@ -75,25 +75,38 @@ public class CameraActivity extends AppCompatActivity {
 
 
         barcodeDetector = new BarcodeDetector.Builder(this)
-        		.setBarcodeFormats(Barcode.QR_CODE)
         		.build();
 
         barcodeDetector.setProcessor(new Detector.Processor() {
         	@Override 
         	public void release() { }
 
-            @Override
-            public void receiveDetections(Detector.Detections detections) {
-                final SparseArray barcodes = detections.getDetectedItems();
+			@Override
+			public void receiveDetections(Detector.Detections detections) {
+				final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if (barcodes.size() != 0) {
+
                     barcodeInfo.post(new Runnable() {
                         // Use the post method of the TextView
                         public void run() {
+                        	for(int i=0; i<barcodes.size(); i++){
+		                    	int key = barcodes.keyAt(i);
+		                    	Log.d("Element at "+key, " is "+barcodes.get(key));
+		                    }
                             barcodeInfo.setText( "found barcode" );
+                            barcodeInfo.setText(    // Update the TextView
+                                    barcodes.valueAt(0).displayValue
+                            );
+                            
                         }
                     });
                 }
+			}
+
+
+            public void receiveDetections2(Detector.Detections<Barcode> detections) {
+                
             }
         });
         
