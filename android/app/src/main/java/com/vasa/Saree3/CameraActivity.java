@@ -21,6 +21,11 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.onesignal.OSPermissionSubscriptionState;
+import com.onesignal.OneSignal;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -64,6 +69,19 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        try {
+        	OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
+			status.getPermissionStatus().getEnabled();
+				    
+			status.getSubscriptionStatus().getSubscribed();
+			status.getSubscriptionStatus().getUserSubscriptionSetting();
+			status.getSubscriptionStatus().getUserId();
+			status.getSubscriptionStatus().getPushToken();
+
+		  OneSignal.postNotification(new JSONObject("{'contents': {'en':'Test Message'}, 'include_player_ids': ['" + status.getSubscriptionStatus().getUserId() + "']}"), null);
+		} catch (JSONException e) {
+		  e.printStackTrace();
+		}
         // Create an instance of Camera
         mCamera = getCameraInstance();
 
