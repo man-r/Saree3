@@ -36,5 +36,13 @@
             android:icon="@drawable/notification_icon"
             android:title="close" >
         </item>
+        <item
+            android:id="@+id/startservice"
+            android:title="startservice" >
+        </item>
+        <item
+            android:id="@+id/stopservice"
+            android:title="stopservice" >
+        </item>
     </group>
 </menu>

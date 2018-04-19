@@ -15,24 +15,22 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
-    
+
     <application
+        android:name=".ApplicationClass"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:name=".ApplicationClass">
-
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
-
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode,face" />
-            
-        <activity
-            android:name=".MainActivity">
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,11 +52,15 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".CameraActivity"
-            android:screenOrientation="portrait"
-        ></activity>
+        <activity
+            android:name=".CameraActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".GetPermission" />
 
-        <activity android:name=".GetPermission"></activity>
+        <service
+            android:name=".MyIntentService"
+            android:exported="false"></service>
+        <service android:name=".MyService"></service>
     </application>
 
 </manifest>

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	public static final String TAG = "manar";
 
-	public static final String CHANNEL_ID = "manar";
+	public static final String CHANNEL_ID = "my_channel_01";
 
     public static final String PREFS_NAME = "MyPrefsFile";
     
@@ -210,6 +210,17 @@ public class MainActivity extends AppCompatActivity {
 					        	Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
 					            startActivityForResult(cameraIntent, 0);
 					            break;
+
+					        case R.id.startservice:
+					        	Intent startIntent = new Intent(MainActivity.this, MyService.class);
+				                startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+				                startService(startIntent);
+					            break;
+					        case R.id.stopservice:
+					        	Intent stopIntent = new Intent(MainActivity.this, MyService.class);
+				                stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+				                startService(stopIntent);
+				                break;
 					        default:
 					            break;
 					        	
@@ -265,8 +276,8 @@ public class MainActivity extends AppCompatActivity {
 
         
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-        .setSmallIcon(R.drawable.notification_icon)
+        Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+        	.setSmallIcon(R.drawable.notification_icon)
         .setContentTitle("Saree3")
         .setContentText("maxSpeed= " + maxSpeed + " Km/h")
         .setStyle(new NotificationCompat.BigTextStyle()
@@ -274,12 +285,10 @@ public class MainActivity extends AppCompatActivity {
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
 		.setOnlyAlertOnce(true)
-        .setOngoing(false);
+        .setOngoing(false)
+                .setChannelId(CHANNEL_ID)
+                .build();
 
-        
-		// notificationId is a unique int for each notification that you must define
-		NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-		notificationManager.notify(3, mBuilder.build());
 		
 
         latitude.setText("latitude: " + maxLat);
@@ -428,21 +437,18 @@ public class MainActivity extends AppCompatActivity {
     				
     				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
 					
-    				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-			        .setSmallIcon(R.drawable.notification_icon)
-			        .setContentTitle("Saree3")
-			        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-			        .setStyle(new NotificationCompat.BigTextStyle()
-			        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
-			        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-			        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-			        .setOnlyAlertOnce(true)
-			        .setOngoing(false);
-
-			        
-					// notificationId is a unique int for each notification that you must define
-					NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-					notificationManager.notify(3, mBuilder.build());
+    				Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.notification_icon)
+        .setContentTitle("Saree3")
+        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+        .setStyle(new NotificationCompat.BigTextStyle()
+        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+		.setOnlyAlertOnce(true)
+        .setOngoing(false)
+                .setChannelId(CHANNEL_ID)
+                .build();
     				
     				if (state.equals("maxSpeed")) {
     					speedText.setText("" + speed);
