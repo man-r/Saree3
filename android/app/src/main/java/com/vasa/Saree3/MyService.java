@@ -14,15 +14,37 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+import android.location.LocationListener;
+import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 
 public class MyService extends Service {
     public static final String TAG = "manar";
+    SharedPreferences topSpeed;
+    int maxSpeed;
+    String maxLat;
+    String maxLong;
+
     String CHANNEL_ID = "manar";// The id of the channel.
     int notifyID = 1; 
     
     int mStartMode;       // indicates how to behave if the service is killed
     IBinder mBinder;      // interface for clients that bind
     boolean mAllowRebind; // indicates whether onRebind should be used
+
+    Bitmap icon;
+
+    PendingIntent pendingIntent;
+    Intent stopIntent;
+    PendingIntent pstopIntent;
+
+    LocationManager locationManager;
+    LocationListener locationListener;
+    Criteria criteria;
 
     @Override
     public void onCreate() {
@@ -32,20 +54,27 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
+        topSpeed = this.getSharedPreferences("topspeed", Context.MODE_PRIVATE);
+        maxSpeed = topSpeed.getInt("topspeed",0);
+        maxLat = topSpeed.getString("lat", "0");
+        maxLong  = topSpeed.getString("long", "0");
+
+        icon = BitmapFactory.decodeResource(getResources(), R.drawable.notification_icon);
+
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Received Start Foreground Intent ");
+
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
             notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-            Intent previousIntent = new Intent(this, MyService.class);
-            previousIntent.setAction(Constants.ACTION.PREV_ACTION);
+            Intent enableGPSIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
-            PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
+            PendingIntent penableGPSIntent = PendingIntent.getService(this, 0, enableGPSIntent, 0);
 
             Intent playIntent = new Intent(this, MyService.class);
             playIntent.setAction(Constants.ACTION.PLAY_ACTION);
@@ -57,36 +86,68 @@ public class MyService extends Service {
 
             PendingIntent pnextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
-            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+            stopIntent = new Intent(this, MyService.class);
+            stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
 
+            pstopIntent = PendingIntent.getService(this, 0, stopIntent, 0);
 
-            CharSequence name = "Saree3";// The user-visible name of the channel.
             
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Truiton Music Player")
-                .setTicker("Truiton Music Player")
-                .setContentText("My Music")
-                .setSmallIcon(R.drawable.icon)
-                .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
-                .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .addAction(android.R.drawable.ic_media_previous, "Previous", ppreviousIntent)
-                .addAction(android.R.drawable.ic_media_play, "Play", pplayIntent)
-                .addAction(android.R.drawable.ic_media_next, "Next", pnextIntent)
-                .setChannelId(CHANNEL_ID)
-                .build();
-
-            // NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //     NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
-            //     mNotificationManager.createNotificationChannel(mChannel);
-            // }
-            // Issue the notification.
-            //mNotificationManager.notify(notifyID , notification);
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationListener = new MyLocationListener();
+            criteria = new Criteria();
+            criteria.setSpeedRequired(true);
+            criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
             
-            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+            String bestProvider = locationManager.getBestProvider(criteria, true);
 
-        } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
+            if ((bestProvider != null) && (bestProvider.contains("gps"))){
+                CharSequence name = "Saree3";// The user-visible name of the channel.
+            
+                Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    .setContentTitle("Saree3")
+                    .setTicker("Saree3 Tracker")
+                    .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+                    .setSmallIcon(R.drawable.icon)
+                    .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
+                    .setChannelId(CHANNEL_ID)
+                    .build();
+
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                    mNotificationManager.createNotificationChannel(mChannel);
+                }
+                startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+                locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+            }
+            else{
+                CharSequence name = "Saree3";// The user-visible name of the channel.
+            
+                Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    .setContentTitle("No GPS!")
+                    .setTicker("No GPS!")
+                    .setContentText("Click to Enable GPS")
+                    .setSmallIcon(R.drawable.icon)
+                    .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0))
+                    .setOngoing(true)
+                    .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
+                    .setChannelId(CHANNEL_ID)
+                    .build();
+
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                    mNotificationManager.createNotificationChannel(mChannel);
+                }
+                startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+            }
+
+
+        } else if (intent.getAction().equals(Constants.ACTION.ENABLEGPS_ACTION)) {
             Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Clicked Previous");
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
@@ -124,5 +185,78 @@ public class MyService extends Service {
         // The service is no longer used and is being destroyed
         super.onDestroy();
         Log.i(TAG, "In onDestroy");
+    }
+
+
+
+    public class MyLocationListener implements LocationListener{
+
+        public void onLocationChanged(Location loc) {
+            // TODO Auto-generated method stub
+            if(loc.hasSpeed()){
+                int speed = (int) (loc.getSpeed()* 3.6);
+                if(speed>maxSpeed){
+                    maxSpeed=speed;
+                    maxLat = "" + loc.getLatitude();
+                    maxLong = "" + loc.getLongitude();
+                    
+                    topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
+                    
+                    CharSequence name = "Saree3";// The user-visible name of the channel.
+                
+                    Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                        .setContentTitle("Saree3")
+                        .setTicker("Saree3 Tracker")
+                        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true)
+                        .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
+                        .setChannelId(CHANNEL_ID)
+                        .setOnlyAlertOnce(true)
+                        .build();
+
+                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                        mNotificationManager.createNotificationChannel(mChannel);
+                    }
+                        
+                }
+                else {
+                    
+                }
+                
+            }
+            
+            else{
+                //max.setText("No Speed Data !");
+            }       
+            
+        }
+
+        public void onProviderDisabled(String provider) {
+            // TODO Auto-generated method stub
+            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+            Intent startIntent = new Intent(getApplicationContext(), MyService.class);
+            startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+            startService(startIntent);
+        }
+
+        public void onProviderEnabled(String provider) {
+            // TODO Auto-generated method stub
+            Toast.makeText(getApplicationContext(), "Gps Esabled", Toast.LENGTH_SHORT).show();
+            Intent startIntent = new Intent(getApplicationContext(), MyService.class);
+            startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+            startService(startIntent);
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // TODO Auto-generated method stub
+            if(status!=2)
+                Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
+        }
+        
     }
 }
