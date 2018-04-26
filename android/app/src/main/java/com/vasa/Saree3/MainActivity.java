@@ -1,12 +1,16 @@
 package com.vasa.Saree3;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 import android.location.LocationListener;
@@ -126,10 +130,15 @@ public class MainActivity extends AppCompatActivity {
 		TextView geopoints = (TextView)findViewById(R.id.geopoints);
 		geopoints.setText(cursor.getCount() + "");
 
+		Intent startIntent = new Intent(MainActivity.this, MyService.class);
+        startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        startService(startIntent);
+
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Constants.ACTION.LOCATION_CHANGED_ACTION));
         // Toolbar toolbar = findViewById(R.id.toolbar);
         // setSupportActionBar(toolbar);
         // final EditText textBox = );
-								
+		
         chalangebuilder = new AlertDialog.Builder(this);
     	chalangebuilder.setMessage("enter your name?")
     	       .setCancelable(false)
@@ -151,13 +160,6 @@ public class MainActivity extends AppCompatActivity {
 	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	           public void onClick(DialogInterface dialog, int id) {
 	        	   
-	        	   locationManager.removeUpdates(locationListener);
-	        	   mWakeLock.release();
-	       		
-    	       	   String ns = Context.NOTIFICATION_SERVICE;
-    	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-    	       	   mNotificationManager.cancel(3);
-	       		
 	        	   finish();
 	           }
 	       })
@@ -271,15 +273,15 @@ public class MainActivity extends AppCompatActivity {
 		maxLat = topSpeed.getString("lat", "0");
 		maxLong  = topSpeed.getString("long", "0");
 		
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		locationListener = new MyLocationListener();
-		criteria = new Criteria();
-		criteria.setSpeedRequired(true);
-		criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
-        
-        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
-        this.mWakeLock.acquire();
+//		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//		locationListener = new MyLocationListener();
+//		criteria = new Criteria();
+//		criteria.setSpeedRequired(true);
+//		criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
+//
+//        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
+//        this.mWakeLock.acquire();
 
 
         
@@ -360,35 +362,35 @@ public class MainActivity extends AppCompatActivity {
 		// TODO Auto-generated method stub
 		super.onStart();
 		 
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-       
-        if ((bestProvider != null) && (bestProvider.contains("gps"))){
-        	locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
-        }
-        else{
-        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        	builder.setMessage("No GPS!")
-        	       .setCancelable(true)
-        	       .setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
-        	           public void onClick(DialogInterface dialog, int id) {
-        	        	   Intent switchIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        	               startActivityForResult(switchIntent, 0);
-        	           }
-        	       })
-        	       .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-        	           public void onClick(DialogInterface dialog, int id) {
-        	        	   locationManager.removeUpdates(locationListener);
-           	       		
-	        	       	   String ns = Context.NOTIFICATION_SERVICE;
-	        	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-	        	       	   mNotificationManager.cancel(3);
-        	       		
-        	        	   finish();
-        	           }
-        	       });
-        	AlertDialog alert = builder.create();
-        	alert.show();
-        }
+//        String bestProvider = locationManager.getBestProvider(criteria, true);
+//
+//        if ((bestProvider != null) && (bestProvider.contains("gps"))){
+//        	locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+//        }
+//        else{
+//        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        	builder.setMessage("No GPS!")
+//        	       .setCancelable(true)
+//        	       .setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
+//        	           public void onClick(DialogInterface dialog, int id) {
+//        	        	   Intent switchIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//        	               startActivityForResult(switchIntent, 0);
+//        	           }
+//        	       })
+//        	       .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+//        	           public void onClick(DialogInterface dialog, int id) {
+//        	        	   locationManager.removeUpdates(locationListener);
+//
+//	        	       	   String ns = Context.NOTIFICATION_SERVICE;
+//	        	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+//	        	       	   mNotificationManager.cancel(3);
+//
+//        	        	   finish();
+//        	           }
+//        	       });
+//        	AlertDialog alert = builder.create();
+//        	alert.show();
+//        }
            	
         //Toast.makeText(getApplicationContext(), "onStart", Toast.LENGTH_LONG).show();
 	}
@@ -438,49 +440,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-	public class MyLocationListener implements LocationListener{
-
-		@SuppressLint("NewApi")
-		@SuppressWarnings("deprecation")
-		public void onLocationChanged(Location loc) {
-			// TODO Auto-generated method stub
-			if(loc.hasSpeed()){
+	BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// Get extra data included in the Intent
+			String message = intent.getStringExtra("message");
+			Log.d("receiver", "Got message: " + message);
+			double alt = intent.getDoubleExtra("altitude",0);
+            double lat = intent.getDoubleExtra("latitude",0);
+            double lon= intent.getDoubleExtra("longitude",0);
+            long time       = intent.getLongExtra("time",0);
+            int speed     = (int) intent.getDoubleExtra("speed",0);
+			if(speed > 0) {
 				String state = max.getText().toString();
-				speed = (int) (loc.getSpeed()* 3.6);
+				speed = (int) (speed * 3.6);
 				if(speed>maxSpeed){
 					maxSpeed=speed;
-    				maxLat = "" + loc.getLatitude();
-    				maxLong = "" + loc.getLongitude();
+    				maxLat = "" + lat;
+    				maxLong = "" + lon;
     				
     				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
 					
-    				Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.notification_icon)
-        .setContentTitle("Saree3")
-        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-        .setStyle(new NotificationCompat.BigTextStyle()
-        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-		.setOnlyAlertOnce(true)
-        .setOngoing(false)
-                .setChannelId(CHANNEL_ID)
-                .build();
-    				
     				if (state.equals("maxSpeed")) {
     					speedText.setText("" + speed);
     				}
     				
-    				latitude.setText("latitude: " + loc.getLatitude());
-    				longitude.setText("longitude: " + loc.getLongitude());
+    				latitude.setText("latitude: " + lat);
+    				longitude.setText("longitude: " + lon);
     				
 				}
 				else {
 					if (state.equals("currentSpeed")) {
     					speedText.setText("" + speed);
-    					latitude.setText("latitude: " + loc.getLatitude());
-        				longitude.setText("longitude: " + loc.getLongitude());
+    					latitude.setText("latitude: " + lat);
+        				longitude.setText("longitude: " + lon);
         				
     				}
     				
@@ -490,26 +483,80 @@ public class MainActivity extends AppCompatActivity {
 			
 			else{
 				max.setText("No Speed Data !");
-			}		
+			}
+		}
+	};
+	// public class MyLocationListener implements LocationListener{
+
+	// 	@SuppressLint("NewApi")
+	// 	@SuppressWarnings("deprecation")
+	// 	public void onLocationChanged(Location loc) {
+	// 		// TODO Auto-generated method stub
+	// 		if(loc.hasSpeed()){
+	// 			String state = max.getText().toString();
+	// 			speed = (int) (loc.getSpeed()* 3.6);
+	// 			if(speed>maxSpeed){
+	// 				maxSpeed=speed;
+ //    				maxLat = "" + loc.getLatitude();
+ //    				maxLong = "" + loc.getLongitude();
+    				
+ //    				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
+					
+ //    				Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+ //                .setSmallIcon(R.drawable.notification_icon)
+ //        .setContentTitle("Saree3")
+ //        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+ //        .setStyle(new NotificationCompat.BigTextStyle()
+ //        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
+ //        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+ //        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+	// 	.setOnlyAlertOnce(true)
+ //        .setOngoing(false)
+ //                .setChannelId(CHANNEL_ID)
+ //                .build();
+    				
+ //    				if (state.equals("maxSpeed")) {
+ //    					speedText.setText("" + speed);
+ //    				}
+    				
+ //    				latitude.setText("latitude: " + loc.getLatitude());
+ //    				longitude.setText("longitude: " + loc.getLongitude());
+    				
+	// 			}
+	// 			else {
+	// 				if (state.equals("currentSpeed")) {
+ //    					speedText.setText("" + speed);
+ //    					latitude.setText("latitude: " + loc.getLatitude());
+ //        				longitude.setText("longitude: " + loc.getLongitude());
+        				
+ //    				}
+    				
+	// 			}
+    			
+	// 		}
 			
-		}
+	// 		else{
+	// 			max.setText("No Speed Data !");
+	// 		}		
+			
+	// 	}
 
-		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub
-			Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
-		}
+	// 	public void onProviderDisabled(String provider) {
+	// 		// TODO Auto-generated method stub
+	// 		Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+	// 	}
 
-		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
-			Toast.makeText(getApplicationContext(), "Gps Esabled", Toast.LENGTH_SHORT).show();
-		}
+	// 	public void onProviderEnabled(String provider) {
+	// 		// TODO Auto-generated method stub
+	// 		Toast.makeText(getApplicationContext(), "Gps Esabled", Toast.LENGTH_SHORT).show();
+	// 	}
 
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
-			if(status!=2)
-    			max.setText("No Gps !");
-    			Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
-		}
+	// 	public void onStatusChanged(String provider, int status, Bundle extras) {
+	// 		// TODO Auto-generated method stub
+	// 		if(status!=2)
+ //    			max.setText("No Gps !");
+ //    			Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
+	// 	}
 		
-	}
+	// }
 }

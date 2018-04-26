@@ -241,26 +241,27 @@ public class MyService extends Service {
             // Create a new map of values, where column names are the keys
             ContentValues values = new ContentValues();
             values.put("playerid", status.getSubscriptionStatus().getUserId());
-            values.put("latitude", loc.getLatitude());
-            values.put("longitude", loc.getLongitude());
+            values.put("latitude", loc.getLatitude()+"");
+            values.put("longitude", loc.getLongitude()+"");
+            values.put("altitude", loc.getAltitude()+"");
             values.put("timestamp", loc.getTime() + "");
             values.put("speed", loc.getSpeed() + "");
             
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert("geo", null, values);
-            Toast.makeText(getApplicationContext(), "newRowId inserted", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), newRowId + "newRowId inserted", Toast.LENGTH_LONG).show();
             
 
             // Create intent with action
             Intent localIntent = new Intent(Constants.ACTION.LOCATION_CHANGED_ACTION);
-            localIntent.putExtra("altitude ", loc.getAltitude());
-            localIntent.putExtra("latitude ", loc.getLatitude());
-            localIntent.putExtra("longitude ", loc.getLongitude());
+            localIntent.putExtra("altitude", loc.getAltitude());
+            localIntent.putExtra("latitude", loc.getLatitude());
+            localIntent.putExtra("longitude", loc.getLongitude());
             localIntent.putExtra("time", loc.getTime());
-
+            localIntent.putExtra("speed", loc.getSpeed());
             
             if(loc.hasSpeed()){
-                localIntent.putExtra("speed", loc.getSpeed());
+                
                 int speed = (int) (loc.getSpeed()* 3.6);
                 if(speed>maxSpeed){
                     maxSpeed=speed;

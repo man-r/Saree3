@@ -11,14 +11,14 @@ public class GeoReaderDbHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME = "geo";
     public static final String COLUMN_NAME_PLAYERID = "playerid";
-    public static final String COLUMN_NAME_LAT = "lat";
-    public static final String COLUMN_NAME_LONG = "long";
-    public static final String COLUMN_NAME_ALT = "alt";
+    public static final String COLUMN_NAME_LAT = "latitude";
+    public static final String COLUMN_NAME_LONG = "longitude";
+    public static final String COLUMN_NAME_ALT = "altitude";
     public static final String COLUMN_NAME_SPEED = "speed";
     public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
 
     private static final String SQL_CREATE_GEO =
-        "CREATE TABLE geo (playerid TEXT,lat TEXT, long TEXT, alt TEXT, speed TEXT, timestamp TEXT)";
+        "CREATE TABLE geo (playerid TEXT,latitude TEXT, longitude TEXT, altitude TEXT, speed TEXT, timestamp TEXT)";
 
     private static final String SQL_DELETE_GEO =
         "DROP TABLE IF EXISTS geo";
