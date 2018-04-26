@@ -5,13 +5,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 import android.location.LocationListener;
@@ -21,6 +24,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import com.onesignal.OSPermissionSubscriptionState;
+import com.onesignal.OneSignal;
+
+import org.json.JSONObject;
 
 public class MyService extends Service {
     public static final String TAG = "manar";
@@ -42,14 +50,17 @@ public class MyService extends Service {
     Intent stopIntent;
     PendingIntent pstopIntent;
 
+    LocalBroadcastManager localBroadcastManager;
     LocationManager locationManager;
     LocationListener locationListener;
     Criteria criteria;
+
 
     @Override
     public void onCreate() {
         // The service is being created
         super.onCreate();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -97,6 +108,32 @@ public class MyService extends Service {
             criteria = new Criteria();
             criteria.setSpeedRequired(true);
             criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    0, locationListener);
+            }
+
+            //if GPS Enabled get lat/long using GPS Services
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0, locationListener);
+            }
+
+            // if (locationManager != null){
+            //     Location loc = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            //     if (loc !=null) {
+                    
+            //         JSONObject obj = getLocationObject(loc);
+            //         mCallbackContext.success(obj.toString());
+            //     }
+
+            // }
+            //criteria.setSpeedRequired(true);
+            //criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
             
             String bestProvider = locationManager.getBestProvider(criteria, true);
 
@@ -122,6 +159,7 @@ public class MyService extends Service {
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
                 locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+                Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             }
             else{
                 CharSequence name = "Saree3";// The user-visible name of the channel.
@@ -159,6 +197,7 @@ public class MyService extends Service {
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Received Stop Foreground Intent");
+            locationManager.removeUpdates(locationListener);
             stopForeground(true);
             stopSelf();
         }
@@ -192,8 +231,36 @@ public class MyService extends Service {
     public class MyLocationListener implements LocationListener{
 
         public void onLocationChanged(Location loc) {
-            // TODO Auto-generated method stub
+            // Gets the data repository in write mode
+            
+            OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
+            status.getSubscriptionStatus().getUserId();
+            GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(getApplicationContext());
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put("playerid", status.getSubscriptionStatus().getUserId());
+            values.put("latitude", loc.getLatitude());
+            values.put("longitude", loc.getLongitude());
+            values.put("timestamp", loc.getTime() + "");
+            values.put("speed", loc.getSpeed() + "");
+            
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId = db.insert("geo", null, values);
+            Toast.makeText(getApplicationContext(), "newRowId inserted", Toast.LENGTH_LONG).show();
+            
+
+            // Create intent with action
+            Intent localIntent = new Intent(Constants.ACTION.LOCATION_CHANGED_ACTION);
+            localIntent.putExtra("altitude ", loc.getAltitude());
+            localIntent.putExtra("latitude ", loc.getLatitude());
+            localIntent.putExtra("longitude ", loc.getLongitude());
+            localIntent.putExtra("time", loc.getTime());
+
+            
             if(loc.hasSpeed()){
+                localIntent.putExtra("speed", loc.getSpeed());
                 int speed = (int) (loc.getSpeed()* 3.6);
                 if(speed>maxSpeed){
                     maxSpeed=speed;
@@ -232,8 +299,10 @@ public class MyService extends Service {
             
             else{
                 //max.setText("No Speed Data !");
-            }       
-            
+            }
+
+            // Send local broadcast
+            localBroadcastManager.sendBroadcast(localIntent);
         }
 
         public void onProviderDisabled(String provider) {

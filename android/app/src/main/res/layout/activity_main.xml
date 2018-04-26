@@ -71,6 +71,20 @@
                 />
                 
             </TableRow>
+            <TableRow
+                android:gravity="bottom|center_horizontal"
+                >
+                <TextView
+                    android:id="@+id/geopoints"  
+                    android:layout_width="wrap_content" 
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="@string/latitude"
+                    android:fontFamily="@font/digital"
+                />
+                
+            </TableRow>
+
             
     </TableLayout>
 

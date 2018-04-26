@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class GeoReaderDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "FeedReader.db";
+    public static final String DATABASE_NAME = "Saree3.db";
 
     public static final String TABLE_NAME = "geo";
     public static final String COLUMN_NAME_PLAYERID = "playerid";

@@ -8,6 +8,7 @@ public class Constants {
  		public static String NEXT_ACTION = "com.truiton.foregroundservice.action.next";
  		public static String STARTFOREGROUND_ACTION = "com.truiton.foregroundservice.action.startforeground";
  		public static String STOPFOREGROUND_ACTION = "com.truiton.foregroundservice.action.stopforeground";
+ 		public static String LOCATION_CHANGED_ACTION = "LOCATION_CHANGED_ACTION";
  	}
  
  	public interface NOTIFICATION_ID {

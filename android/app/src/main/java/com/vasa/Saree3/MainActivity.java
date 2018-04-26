@@ -1,6 +1,8 @@
 package com.vasa.Saree3;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -117,7 +119,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        
+        GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+		Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
+		TextView geopoints = (TextView)findViewById(R.id.geopoints);
+		geopoints.setText(cursor.getCount() + "");
+
         // Toolbar toolbar = findViewById(R.id.toolbar);
         // setSupportActionBar(toolbar);
         // final EditText textBox = );
@@ -389,6 +397,16 @@ public class MainActivity extends AppCompatActivity {
 
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
+			GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(getApplicationContext());
+	        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+			Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
+			TextView geopoints = (TextView)findViewById(R.id.geopoints);
+			geopoints.setText(cursor.getCount() + "");
+			while(cursor.moveToNext()) {
+			  geopoints.setText(cursor.getCount() + "");
+			}
+			cursor.close();
 			String state = max.getText().toString();
 			if (state.equals("maxSpeed")) {
 				max.setText("currentSpeed");
