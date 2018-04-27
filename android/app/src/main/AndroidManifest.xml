@@ -30,7 +30,9 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode,face" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,7 +53,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="portrait" />
@@ -61,6 +64,14 @@
             android:name=".MyIntentService"
             android:exported="false"></service>
         <service android:name=".MyService"></service>
+        <service
+            android:name=".MyNotificationExtender"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.onesignal.NotificationExtender" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
