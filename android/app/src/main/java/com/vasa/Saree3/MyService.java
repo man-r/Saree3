@@ -112,7 +112,7 @@ public class MyService extends Service {
                 locationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER,
                     0,
-                    0, locationListener);
+                    1000, locationListener);
             }
 
             //if GPS Enabled get lat/long using GPS Services
@@ -120,7 +120,7 @@ public class MyService extends Service {
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     0,
-                    0, locationListener);
+                    1000, locationListener);
             }
 
             // if (locationManager != null){
@@ -132,8 +132,6 @@ public class MyService extends Service {
             //     }
 
             // }
-            //criteria.setSpeedRequired(true);
-            //criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
             
             String bestProvider = locationManager.getBestProvider(criteria, true);
 
@@ -158,7 +156,7 @@ public class MyService extends Service {
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-                locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+                locationManager.requestLocationUpdates(bestProvider, 0, 1000, locationListener);
                 Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             }
             else{

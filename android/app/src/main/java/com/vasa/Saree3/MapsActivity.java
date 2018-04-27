@@ -3,6 +3,8 @@ package com.vasa.Saree3;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -71,6 +73,21 @@ public class MapsActivity extends FragmentActivity
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         
+        GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount() && i < 1000; i++) {
+            double lat = Double.parseDouble(cursor.getString(1));
+            double lon = Double.parseDouble(cursor.getString(2));
+           
+            map.addMarker(new MarkerOptions()
+                .position(new LatLng(lat, lon))
+                .title("Hello world"));
+
+            cursor.moveToNext();
+        }
     }
 }
 
