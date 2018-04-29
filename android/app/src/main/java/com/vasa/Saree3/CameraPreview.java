@@ -10,8 +10,7 @@ import java.io.IOException;
 
 /** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    public static final String TAG = "manar";
-
+    
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
@@ -34,7 +33,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setDisplayOrientation(90);
             mCamera.startPreview();
         } catch (IOException e) {
-            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+            Log.d(Constants.TAGS.TAG, "Error setting camera preview: " + e.getMessage());
         }
     }
 
@@ -67,7 +66,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
 
         } catch (Exception e){
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.d(Constants.TAGS.TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
 }

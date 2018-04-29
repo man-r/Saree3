@@ -55,8 +55,6 @@ import android.support.design.widget.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 	
-	public static final String TAG = "manar";
-
 	public static final String CHANNEL_ID = "my_channel_01";
 
     public static final String PREFS_NAME = "MyPrefsFile";
@@ -244,10 +242,6 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-
-        Intent intent = new Intent(getApplicationContext(), GetPermission.class);
-        intent.putExtra("permission", ACCESS_FINE_LOCATION);
-        startActivityForResult(intent, ACCESS_FINE_LOCATION);
 
         latitude = (TextView)findViewById(R.id.latitude);
     	longitude = (TextView)findViewById(R.id.longitude);

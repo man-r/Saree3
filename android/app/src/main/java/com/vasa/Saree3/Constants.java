@@ -48,4 +48,8 @@ public class Constants {
 		public static final String SQL_DELETE_GEO =
     		"DROP TABLE IF EXISTS geo";
 	}
+
+	public interface TAGS {
+ 		public static final String TAG = "manar";
+ 	}
 }

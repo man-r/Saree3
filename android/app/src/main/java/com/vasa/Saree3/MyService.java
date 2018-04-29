@@ -31,7 +31,7 @@ import com.onesignal.OneSignal;
 import org.json.JSONObject;
 
 public class MyService extends Service {
-    public static final String TAG = "manar";
+    
     SharedPreferences topSpeed;
     int maxSpeed;
     String maxLat;
@@ -74,7 +74,7 @@ public class MyService extends Service {
 
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Received Start Foreground Intent ");
+            Log.i(Constants.TAGS.TAG, "Received Start Foreground Intent ");
 
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -185,16 +185,16 @@ public class MyService extends Service {
 
         } else if (intent.getAction().equals(Constants.ACTION.ENABLEGPS_ACTION)) {
             Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Clicked Previous");
+            Log.i(Constants.TAGS.TAG, "Clicked Previous");
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
             Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Clicked Play");
+            Log.i(Constants.TAGS.TAG, "Clicked Play");
         } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
             Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Clicked Next");
+            Log.i(Constants.TAGS.TAG, "Clicked Next");
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Received Stop Foreground Intent");
+            Log.i(Constants.TAGS.TAG, "Received Stop Foreground Intent");
             locationManager.removeUpdates(locationListener);
             stopForeground(true);
             stopSelf();
@@ -221,7 +221,7 @@ public class MyService extends Service {
     public void onDestroy() {
         // The service is no longer used and is being destroyed
         super.onDestroy();
-        Log.i(TAG, "In onDestroy");
+        Log.i(Constants.TAGS.TAG, "In onDestroy");
     }
 
 

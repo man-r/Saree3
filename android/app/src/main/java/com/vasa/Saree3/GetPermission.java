@@ -24,7 +24,7 @@ import android.Manifest;
 
 import android.util.Log;
 public class GetPermission extends Activity  implements ActivityCompat.OnRequestPermissionsResultCallback {
-    public static final String TAG = "permission";
+    
     private static final int ACCESS_NETWORK_STATE = 2;
     private static final int ACCESS_FINE_LOCATION = 3;
     private static final int WAKE_LOCK = 4;
@@ -36,7 +36,7 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG,"onCreate");
+        Log.d(Constants.TAGS.TAG,"onCreate");
         super.onCreate(savedInstanceState);
         getPermissions();
     }
@@ -248,16 +248,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
         if (requestCode == ACCESS_NETWORK_STATE) {
             // BEGIN_INCLUDE(permission_result)
             // Received permission result for camera permission.
-            Log.i(TAG, "Received response for ACCESS_NETWORK_STATE permission request.");
+            Log.i(Constants.TAGS.TAG, "Received response for ACCESS_NETWORK_STATE permission request.");
 
             // Check if the only required permission has been granted
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // ACCESS_NETWORK_STATE permission has been granted, preview can be displayed
-                Log.i(TAG, "ACCESS_NETWORK_STATE permission has now been granted. Showing preview.");
+                Log.i(Constants.TAGS.TAG, "ACCESS_NETWORK_STATE permission has now been granted. Showing preview.");
                 getPermissions();
 
             } else {
-                  Log.i(TAG, "ACCESS_NETWORK_STATE permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "ACCESS_NETWORK_STATE permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "ACCESS_NETWORK_STATE permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -271,16 +271,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == ACCESS_FINE_LOCATION) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for ACCESS_FINE_LOCATION permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for ACCESS_FINE_LOCATION permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // Camera permission has been granted, preview can be displayed
-                  Log.i(TAG, "ACCESS_FINE_LOCATION permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "ACCESS_FINE_LOCATION permission has now been granted. Showing preview.");
                   getPermissions();
 
               } else {
-                  Log.i(TAG, "ACCESS_FINE_LOCATION permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "ACCESS_FINE_LOCATION permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "ACCESS_FINE_LOCATION permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -294,16 +294,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == WAKE_LOCK) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for WAKE_LOCK permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for WAKE_LOCK permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // Camera permission has been granted, preview can be displayed
-                  Log.i(TAG, "WAKE_LOCK permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "WAKE_LOCK permission has now been granted. Showing preview.");
                   getPermissions();
 
               } else {
-                  Log.i(TAG, "WAKE_LOCK permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "WAKE_LOCK permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "WAKE_LOCK permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -317,16 +317,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == INTERNET) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for INTERNET permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for INTERNET permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // INTERNET permission has been granted, preview can be displayed
-                  Log.i(TAG, "INTERNET permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "INTERNET permission has now been granted. Showing preview.");
                   getPermissions();
 
               } else {
-                  Log.i(TAG, "INTERNET permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "INTERNET permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "INTERNET permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -341,16 +341,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == READ_PHONE_STATE) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for READ_PHONE_STATE permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for READ_PHONE_STATE permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // READ_PHONE_STATE permission has been granted, preview can be displayed
-                  Log.i(TAG, "READ_PHONE_STATE permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "READ_PHONE_STATE permission has now been granted. Showing preview.");
                   getPermissions();
 
               } else {
-                  Log.i(TAG, "READ_PHONE_STATE permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "READ_PHONE_STATE permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "READ_PHONE_STATE permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -365,16 +365,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == WRITE_EXTERNAL_STORAGE) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for WRITE_EXTERNAL_STORAGE permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for WRITE_EXTERNAL_STORAGE permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // WRITE_EXTERNAL_STORAGE permission has been granted, preview can be displayed
-                  Log.i(TAG, "WRITE_EXTERNAL_STORAGE permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "WRITE_EXTERNAL_STORAGE permission has now been granted. Showing preview.");
                   getPermissions();
 
               } else {
-                  Log.i(TAG, "WRITE_EXTERNAL_STORAGE permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "WRITE_EXTERNAL_STORAGE permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "WRITE_EXTERNAL_STORAGE permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -389,16 +389,16 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == CAMERA) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for CAMERA permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for CAMERA permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // CAMERA permission has been granted, preview can be displayed
-                  Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "CAMERA permission has now been granted. Showing preview.");
                   getPermissions();
 
               } else {
-                  Log.i(TAG, "CAMERA permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "CAMERA permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "CAMERA permission not granted");
                   setResult(RESULT_OK,returnIntent);
@@ -413,19 +413,19 @@ public class GetPermission extends Activity  implements ActivityCompat.OnRequest
           if (requestCode == RECORD_AUDIO) {
               // BEGIN_INCLUDE(permission_result)
               // Received permission result for camera permission.
-              Log.i(TAG, "Received response for RECORD_AUDIO permission request.");
+              Log.i(Constants.TAGS.TAG, "Received response for RECORD_AUDIO permission request.");
 
               // Check if the only required permission has been granted
               if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                   // Camera permission has been granted, preview can be displayed
-                  Log.i(TAG, "RECORD_AUDIO permission has now been granted. Showing preview.");
+                  Log.i(Constants.TAGS.TAG, "RECORD_AUDIO permission has now been granted. Showing preview.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "all permission granted");
                   setResult(RESULT_OK,returnIntent);
                   finish();
 
               } else {
-                  Log.i(TAG, "RECORD_AUDIO permission was NOT granted.");
+                  Log.i(Constants.TAGS.TAG, "RECORD_AUDIO permission was NOT granted.");
                   Intent returnIntent = new Intent();
                   returnIntent.putExtra("json", "RECORD_AUDIO permission not granted");
                   setResult(RESULT_OK,returnIntent);
