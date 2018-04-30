@@ -38,11 +38,18 @@
         </item>
         <item
             android:id="@+id/startservice"
+            android:icon="@drawable/notification_icon"
             android:title="startservice" >
         </item>
         <item
             android:id="@+id/stopservice"
+            android:icon="@drawable/notification_icon"
             android:title="stopservice" >
+        </item>
+        <item
+            android:id="@+id/pip"
+            android:icon="@drawable/notification_icon"
+            android:title="PIP mode" >
         </item>
     </group>
 </menu>

@@ -142,17 +142,18 @@ public class MyService extends Service {
                     .setContentTitle("Saree3")
                     .setTicker("Saree3 Tracker")
                     .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-                    .setSmallIcon(R.drawable.icon)
-                    .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setOnlyAlertOnce(true)
                     .setContentIntent(pendingIntent)
                     .setOngoing(true)
                     .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
-                    .setChannelId(CHANNEL_ID)
+                    .setChannelId(CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
                     .build();
 
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+                    mChannel.setSound(null, null);
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
@@ -177,6 +178,7 @@ public class MyService extends Service {
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                    mChannel.setSound(null, null);
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
@@ -280,12 +282,13 @@ public class MyService extends Service {
                         .setOngoing(true)
                         .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
                         .setChannelId(CHANNEL_ID)
-                        .setOnlyAlertOnce(true)
+                        .setOnlyAlertOnce(true).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
                         .build();
 
                     NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+                        mChannel.setSound(null, null);
                         mNotificationManager.createNotificationChannel(mChannel);
                     }
                         

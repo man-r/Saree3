@@ -3,9 +3,11 @@ package com.vasa.Saree3;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -53,21 +55,11 @@ import android.app.NotificationChannel;
 import android.os.Build;
 import android.support.design.widget.NavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 	
 	public static final String CHANNEL_ID = "my_channel_01";
 
     public static final String PREFS_NAME = "MyPrefsFile";
-    
-    private static final int ACCESS_NETWORK_STATE = 2;
-	private static final int ACCESS_FINE_LOCATION = 3;
-	private static final int WAKE_LOCK = 4;
-	private static final int INTERNET = 5;
-	private static final int READ_PHONE_STATE = 6;
-	private static final int WRITE_EXTERNAL_STORAGE = 7;
-	private static final int CAMERA = 8;
-	private static final int RECORD_AUDIO = 9;
-    //public static final int REQUEST_CODE_EMAIL = 3;  // The request code
 
     private DrawerLayout mDrawerLayout;
 
@@ -98,29 +90,11 @@ public class MainActivity extends AppCompatActivity {
 	protected PowerManager.WakeLock mWakeLock;
 	
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Auto-generated method stub
-		super.onConfigurationChanged(newConfig);
-		 
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-        }
-        // Checks whether a hardware keyboard is available
-        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
-            Toast.makeText(this, "keyboard visible", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
-            Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
-        }
-	}
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        
         GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -206,9 +180,10 @@ public class MainActivity extends AppCompatActivity {
 					        	chalangealert.show();
 					        	break;
 					        	
-					        case R.id.top:
+					        case R.id.pip:
 					        	//Intent topIntent = new Intent(getApplicationContext(), TopTen.class);
 					            //startActivityForResult(topIntent, 0);
+					        	enterPictureInPictureMode();
 					            break;
 					        case R.id.map:
 					        	Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
@@ -304,43 +279,43 @@ public class MainActivity extends AppCompatActivity {
     @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    switch(requestCode){
-			case ACCESS_NETWORK_STATE:
+			case Constants.PERMISSION.ACCESS_NETWORK_STATE:
 	        	if (resultCode == RESULT_OK) {
 
 	        	}
 	        	break;
 	        	
-			case ACCESS_FINE_LOCATION:
+			case Constants.PERMISSION.ACCESS_FINE_LOCATION:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
 	        	break;
-			case WAKE_LOCK:
+			case Constants.PERMISSION.WAKE_LOCK:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
 	        	break;
-			case INTERNET:
+			case Constants.PERMISSION.INTERNET:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
 	        	break;
-			case READ_PHONE_STATE:
+			case Constants.PERMISSION.READ_PHONE_STATE:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
 	        	break;
-			case WRITE_EXTERNAL_STORAGE:
+			case Constants.PERMISSION.WRITE_EXTERNAL_STORAGE:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
 	        	break;
-			case CAMERA:
+			case Constants.PERMISSION.CAMERA:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
 	        	break;
-			case RECORD_AUDIO:
+			case Constants.PERMISSION.RECORD_AUDIO:
 	        	if (resultCode == RESULT_OK) {
 	        		
 	        	}
