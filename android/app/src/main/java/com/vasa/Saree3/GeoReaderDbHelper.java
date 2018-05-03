@@ -22,17 +22,26 @@ public class GeoReaderDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DELETE_GEO =
         "DROP TABLE IF EXISTS geo";
-        
+    
+    private static final String SQL_CREATE_ACTIVITY =
+        "CREATE TABLE activity (playerid TEXT,act_type TEXT, transition_type TEXT, elapsed_realtime TEXT, createtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+
+    private static final String SQL_DELETE_ACTIVITY =
+        "DROP TABLE IF EXISTS activity";
+     
+
     public GeoReaderDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_GEO);
+        db.execSQL(SQL_CREATE_ACTIVITY);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         db.execSQL(SQL_DELETE_GEO);
+        db.execSQL(SQL_DELETE_ACTIVITY);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

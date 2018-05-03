@@ -125,6 +125,9 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 		TextView geopoints = (TextView)findViewById(R.id.geopoints);
 		geopoints.setText(cursor.getCount() + "");
 
+		cursor = db.rawQuery ("SELECT * FROM activity",null);
+		TextView act = (TextView)findViewById(R.id.act);
+		act.setText(cursor.getCount() + "");
 				
         closebuilder = new AlertDialog.Builder(this);
         closebuilder.setMessage("Are you sure you want to exit?")
@@ -251,7 +254,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
     	if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
     		getPermissions();
     	} else {
-	    	Intent startIntent = new Intent(MainActivity.this, MyService.class);
+	    	Intent startIntent = new Intent(MainActivity.this, MyService2.class);
 	  		startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 			startService(startIntent);
     	}
@@ -306,9 +309,11 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 			Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
 			TextView geopoints = (TextView)findViewById(R.id.geopoints);
 			geopoints.setText(cursor.getCount() + "");
-			while(cursor.moveToNext()) {
-			  geopoints.setText(cursor.getCount() + "");
-			}
+
+			cursor = db.rawQuery ("SELECT * FROM activity",null);
+			TextView act = (TextView)findViewById(R.id.act);
+			act.setText(cursor.getCount() + "");
+
 			cursor.close();
 			String state = max.getText().toString();
 			if (state.equals("maxSpeed")) {

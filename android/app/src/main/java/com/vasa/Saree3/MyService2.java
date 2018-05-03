@@ -25,6 +25,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityTransition;
+import com.google.android.gms.location.ActivityTransitionRequest;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -40,6 +44,9 @@ import com.onesignal.OSPermissionSubscriptionState;
 import com.onesignal.OneSignal;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyService2 extends Service {
     
@@ -66,10 +73,15 @@ public class MyService2 extends Service {
     FusedLocationProviderClient mFusedLocationClient;
     LocationCallback mLocationCallback;
 
+    private PendingIntent transitionPendingIntent;
+
     @Override
     public void onCreate() {
         // The service is being created
         super.onCreate();
+        Intent intent = new Intent(this, TransitionIntentService.class);
+        transitionPendingIntent = PendingIntent.getService(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
@@ -160,15 +172,33 @@ public class MyService2 extends Service {
 
             pstopIntent = PendingIntent.getService(this, 0, stopIntent, 0);
 
+            Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setContentTitle("Saree3")
+                .setTicker("Saree3 Tracker")
+                .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+                .setSmallIcon(R.drawable.notification_icon)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
+                .setChannelId(CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
+                .build();
+
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, "Saree3", NotificationManager.IMPORTANCE_LOW);
+                mChannel.setSound(null, null);
+                mNotificationManager.createNotificationChannel(mChannel);
+            }
+            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+            startLocationUpdates();
+            startActivityTransactionUpdates();
+            Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
+            
+
         } else if (intent.getAction().equals(Constants.ACTION.ENABLEGPS_ACTION)) {
             Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Clicked Previous");
-        } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
-            Log.i(Constants.TAGS.TAG, "Clicked Play");
-        } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
-            Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
-            Log.i(Constants.TAGS.TAG, "Clicked Next");
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Received Stop Foreground Intent");
@@ -199,6 +229,7 @@ public class MyService2 extends Service {
         super.onDestroy();
         Log.i(Constants.TAGS.TAG, "In onDestroy");
         stopLocationUpdates();
+        stopActivityTransactionUpdates();
     }
 
     private void stopLocationUpdates() {
@@ -206,11 +237,158 @@ public class MyService2 extends Service {
     }
     private void startLocationUpdates() {
         LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval (5000);
+        mLocationRequest.setInterval(Constants.LOCATION.UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setSmallestDisplacement(Constants.LOCATION.MIN_DISTANCE);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null /* Looper */);
     }
+
+    private void startActivityTransactionUpdates() {
+        List<ActivityTransition> transitions = new ArrayList<>();
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.IN_VEHICLE)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.IN_VEHICLE)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.ON_BICYCLE)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.ON_BICYCLE)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.ON_FOOT)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.ON_FOOT)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+        
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.RUNNING)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.RUNNING)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+        
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.STILL)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.STILL)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+        
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.TILTING)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.TILTING)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+        
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.UNKNOWN)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.UNKNOWN)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.WALKING)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+            .build());
+
+        transitions.add(
+          new ActivityTransition.Builder()
+            .setActivityType(DetectedActivity.WALKING)
+            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+            .build());
+
+        ActivityTransitionRequest request = new ActivityTransitionRequest(transitions);
+
+        // myPendingIntent is the instance of PendingIntent where the app receives callbacks.
+        Task<Void> task =
+          ActivityRecognition.getClient(this).requestActivityTransitionUpdates(request, transitionPendingIntent);
+
+          task.addOnSuccessListener(
+            new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void result) {
+                // Handle success
+              }
+            }
+          );
+
+          task.addOnFailureListener(
+            new OnFailureListener() {
+              @Override
+              public void onFailure(Exception e) {
+                // Handle error
+              }
+            }
+          );
+    }
+
+    private void stopActivityTransactionUpdates() {
+        Task<Void> task = ActivityRecognition.getClient(this).removeActivityTransitionUpdates(transitionPendingIntent);
+
+        task.addOnSuccessListener(
+          new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+              transitionPendingIntent.cancel();
+            }
+          });
+
+        task.addOnFailureListener(
+          new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+              Log.e("MYCOMPONENT", e.getMessage());
+            }
+          });
+    }
+
 }
