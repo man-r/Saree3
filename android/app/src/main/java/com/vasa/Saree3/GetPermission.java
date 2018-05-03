@@ -23,7 +23,7 @@ import android.Manifest;
 
 
 import android.util.Log;
-public class GetPermission extends Activity  implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class GetPermission extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {

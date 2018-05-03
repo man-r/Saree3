@@ -51,7 +51,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAVbAi5T_mtp77sGimS6PuEGziq_Rm2p1w" />
+            android:value="AIzaSyDEwBng8g_d_NR-rsjFmVRNugkaBTKVmWs" />
 
         <activity
             android:name=".MapsActivity"
@@ -60,10 +60,8 @@
             android:name=".CameraActivity" />
         <activity android:name=".GetPermission" />
 
-        <service
-            android:name=".MyIntentService"
-            android:exported="false"></service>
         <service android:name=".MyService"></service>
+        <service android:name=".MyService2"></service>
         <service
             android:name=".MyNotificationExtender"
             android:permission="android.permission.BIND_JOB_SERVICE"

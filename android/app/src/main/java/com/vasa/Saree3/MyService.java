@@ -112,7 +112,7 @@ public class MyService extends Service {
                 locationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER,
                     0,
-                    1000, locationListener);
+                    Constants.LOCATION.MIN_DISTANCE, locationListener);
             }
 
             //if GPS Enabled get lat/long using GPS Services
@@ -120,7 +120,7 @@ public class MyService extends Service {
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     0,
-                    1000, locationListener);
+                    Constants.LOCATION.MIN_DISTANCE, locationListener);
             }
 
             // if (locationManager != null){
@@ -157,7 +157,7 @@ public class MyService extends Service {
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-                locationManager.requestLocationUpdates(bestProvider, 0, 1000, locationListener);
+                locationManager.requestLocationUpdates(bestProvider, 0, Constants.LOCATION.MIN_DISTANCE, locationListener);
                 Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             }
             else{
@@ -305,6 +305,7 @@ public class MyService extends Service {
 
             // Send local broadcast
             localBroadcastManager.sendBroadcast(localIntent);
+            Log.d(Constants.TAGS.TAG, "localBroadcastManager.sendBroadcast");
         }
 
         public void onProviderDisabled(String provider) {

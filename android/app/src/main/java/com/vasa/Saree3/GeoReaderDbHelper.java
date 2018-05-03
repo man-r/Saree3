@@ -18,7 +18,7 @@ public class GeoReaderDbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
 
     private static final String SQL_CREATE_GEO =
-        "CREATE TABLE geo (playerid TEXT,latitude TEXT, longitude TEXT, altitude TEXT, speed TEXT, timestamp TEXT)";
+        "CREATE TABLE geo (playerid TEXT,latitude TEXT, longitude TEXT, altitude TEXT, speed TEXT, timestamp TIMESTAMP,createtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
 
     private static final String SQL_DELETE_GEO =
         "DROP TABLE IF EXISTS geo";

@@ -54,12 +54,11 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.app.NotificationChannel;
 import android.os.Build;
 import android.support.design.widget.NavigationView;
+import android.Manifest;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity  implements ActivityCompat.OnRequestPermissionsResultCallback {
 	
-	public static final String CHANNEL_ID = "my_channel_01";
-
-    public static final String PREFS_NAME = "MyPrefsFile";
+	public static final String PREFS_NAME = "MyPrefsFile";
 
     private DrawerLayout mDrawerLayout;
 
@@ -73,8 +72,8 @@ public class MainActivity extends AppCompatActivity  {
 	String maxLat="";
 	String maxLong = "";
 	
-	int maxSpeed=0;
-	int speed=0;
+	double maxSpeed=0;
+	double speed=0;
 	
 	String phoneNumber = null;
     
@@ -95,129 +94,6 @@ public class MainActivity extends AppCompatActivity  {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         
-        GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-		Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
-		TextView geopoints = (TextView)findViewById(R.id.geopoints);
-		geopoints.setText(cursor.getCount() + "");
-
-		Intent startIntent = new Intent(MainActivity.this, MyService.class);
-        startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-        startService(startIntent);
-
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Constants.ACTION.LOCATION_CHANGED_ACTION));
-        // Toolbar toolbar = findViewById(R.id.toolbar);
-        // setSupportActionBar(toolbar);
-        // final EditText textBox = );
-		
-        chalangebuilder = new AlertDialog.Builder(this);
-    	chalangebuilder.setMessage("enter your name?")
-    	       .setCancelable(false)
-    	       .setView(new EditText(this))
-    	       .setPositiveButton("post", new DialogInterface.OnClickListener() {
-    	           public void onClick(DialogInterface dialog, int id) {
-    	        	   // chalenge(textBox.getText().toString());
-    	           }
-    	       })
-    	       .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-    	           public void onClick(DialogInterface dialog, int id) {
-    	                dialog.cancel();
-    	           }
-    	       });
-    	
-    	closebuilder = new AlertDialog.Builder(this);
-        closebuilder.setMessage("Are you sure you want to exit?")
-	       .setCancelable(false)
-	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	        	   
-	        	   finish();
-	           }
-	       })
-	       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	                dialog.cancel();
-	           }
-	       });
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        switch(menuItem.getItemId()){
-							case R.id.close:
-					        	
-					        	AlertDialog alert = closebuilder.create();
-					        	alert.show();
-					        	break;
-					        	
-							case R.id.GPSSwitch:
-					        	Intent switchIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					            startActivity(switchIntent);        
-					            break;
-					            
-					        case R.id.share:
-					        	String message = "my top speed is:\n";
-								message = message + "speed:" + maxSpeed + "\n";
-								message = message + "http://maps.google.com/maps?q=" + maxLat + "," + maxLong + "\n";
-								message = message + "this message is sent from saree3";
-
-								Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-								sharingIntent.setType("text/plain");
-								sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "shareing subject");
-								sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, message);
-
-								startActivity(Intent.createChooser(sharingIntent, "Share via"));
-					        	break;
-					        	
-					        case R.id.chalange:
-					        	AlertDialog chalangealert = chalangebuilder.create();		        	
-					        	chalangealert.show();
-					        	break;
-					        	
-					        case R.id.pip:
-					        	//Intent topIntent = new Intent(getApplicationContext(), TopTen.class);
-					            //startActivityForResult(topIntent, 0);
-					        	enterPictureInPictureMode();
-					            break;
-					        case R.id.map:
-					        	Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
-					            startActivityForResult(mapIntent, 0);
-					            break;
-					        case R.id.camera:
-					        	Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
-					            startActivityForResult(cameraIntent, 0);
-					            break;
-
-					        case R.id.startservice:
-					        	Intent startIntent = new Intent(MainActivity.this, MyService.class);
-				                startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-				                startService(startIntent);
-					            break;
-					        case R.id.stopservice:
-					        	Intent stopIntent = new Intent(MainActivity.this, MyService.class);
-				                stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
-				                startService(stopIntent);
-				                break;
-					        default:
-					            break;
-					        	
-							}
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
-
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
-                        return true;
-                    }
-                });
-
         latitude = (TextView)findViewById(R.id.latitude);
     	longitude = (TextView)findViewById(R.id.longitude);
     	speedText = (TextView)findViewById(R.id.speed);
@@ -241,32 +117,125 @@ public class MainActivity extends AppCompatActivity  {
 		maxSpeed = topSpeed.getInt("topspeed",0);
 		maxLat = topSpeed.getString("lat", "0");
 		maxLong  = topSpeed.getString("long", "0");
-		
-//		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//		locationListener = new MyLocationListener();
-//		criteria = new Criteria();
-//		criteria.setSpeedRequired(true);
-//		criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
-//
-//        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//        this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
-//        this.mWakeLock.acquire();
 
+        GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        
+		Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
+		TextView geopoints = (TextView)findViewById(R.id.geopoints);
+		geopoints.setText(cursor.getCount() + "");
 
-        Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+				
+        closebuilder = new AlertDialog.Builder(this);
+        closebuilder.setMessage("Are you sure you want to exit?")
+	       .setCancelable(false)
+	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	        	   
+	        	   finish();
+	           }
+	       })
+	       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	                dialog.cancel();
+	           }
+	       });
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    // set item as selected to persist highlight
+                    menuItem.setChecked(true);
+                    switch(menuItem.getItemId()){
+						case R.id.close:
+				        	
+				        	AlertDialog alert = closebuilder.create();
+				        	alert.show();
+				        	break;
+				        	
+						case R.id.GPSSwitch:
+				        	Intent switchIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				            startActivity(switchIntent);        
+				            break;
+				            
+				        case R.id.share:
+				        	String message = "my top speed is:\n";
+							message = message + "speed:" + maxSpeed + "\n";
+							message = message + "http://maps.google.com/maps?q=" + maxLat + "," + maxLong + "\n";
+							message = message + "this message is sent from saree3";
+
+							Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+							sharingIntent.setType("text/plain");
+							sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "shareing subject");
+							sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+
+							startActivity(Intent.createChooser(sharingIntent, "Share via"));
+				        	break;
+				        	
+				        case R.id.chalange:
+				        	AlertDialog chalangealert = chalangebuilder.create();		        	
+				        	chalangealert.show();
+				        	break;
+				        	
+				        case R.id.pip:
+				        	//Intent topIntent = new Intent(getApplicationContext(), TopTen.class);
+				            //startActivityForResult(topIntent, 0);
+							if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+								enterPictureInPictureMode();
+							} else {
+								Toast.makeText(getApplicationContext(), "feature avialble in android oreo and above", Toast.LENGTH_SHORT).show();
+							}
+
+				            break;
+				        case R.id.map:
+				        	Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
+				            startActivityForResult(mapIntent, 0);
+				            break;
+				        case R.id.camera:
+				        	Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
+				            startActivityForResult(cameraIntent, 0);
+				            break;
+
+				        case R.id.startservice:
+				        	Intent startIntent = new Intent(MainActivity.this, MyService.class);
+			                startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+			                startService(startIntent);
+				            break;
+				        case R.id.stopservice:
+				        	Intent stopIntent = new Intent(MainActivity.this, MyService.class);
+			                stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+			                startService(stopIntent);
+			                break;
+				        default:
+				            break;
+				        	
+						}
+                    // close drawer when item is tapped
+                    mDrawerLayout.closeDrawers();
+
+                    // Add code here to update the UI based on the item selected
+                    // For example, swap UI fragments here
+
+                    return true;
+                }
+            }
+        );
+
+        Notification notification = new NotificationCompat.Builder(getApplicationContext(), Constants.NOTIFICATION.CHANNEL_ID)
         	.setSmallIcon(R.drawable.notification_icon)
-        .setContentTitle("Saree3")
-        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-        .setStyle(new NotificationCompat.BigTextStyle()
-        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-		.setOnlyAlertOnce(true)
-        .setOngoing(false)
-                .setChannelId(CHANNEL_ID)
-                .build();
+	        .setContentTitle("Saree3")
+	        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+	        .setStyle(new NotificationCompat.BigTextStyle()
+	        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
+	        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+	        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+			.setOnlyAlertOnce(true)
+	        .setOngoing(false)
+            .setChannelId(Constants.NOTIFICATION.CHANNEL_ID)
+            .build();
 
 		
 
@@ -274,95 +243,58 @@ public class MainActivity extends AppCompatActivity  {
     	longitude.setText("longitude: " + maxLong);
     	speedText.setText("" + maxSpeed);
 
+
+    	Log.d(Constants.TAGS.TAG, "localBroadcastManager.registerReceiver");
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Constants.ACTION.LOCATION_CHANGED_ACTION));
+
+    	// check for permission
+    	if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    		getPermissions();
+    	} else {
+	    	Intent startIntent = new Intent(MainActivity.this, MyService.class);
+	  		startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+			startService(startIntent);
+    	}
+  		
+
+
     }
 
-    @Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    switch(requestCode){
-			case Constants.PERMISSION.ACCESS_NETWORK_STATE:
-	        	if (resultCode == RESULT_OK) {
+    void getPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION.ACCESS_FINE_LOCATION);
 
-	        	}
-	        	break;
-	        	
-			case Constants.PERMISSION.ACCESS_FINE_LOCATION:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-			case Constants.PERMISSION.WAKE_LOCK:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-			case Constants.PERMISSION.INTERNET:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-			case Constants.PERMISSION.READ_PHONE_STATE:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-			case Constants.PERMISSION.WRITE_EXTERNAL_STORAGE:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-			case Constants.PERMISSION.CAMERA:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-			case Constants.PERMISSION.RECORD_AUDIO:
-	        	if (resultCode == RESULT_OK) {
-	        		
-	        	}
-	        	break;
-	        default:
-	            break;
-	        	
-			}
-	}
-
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION.ACCESS_FINE_LOCATION);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
     @Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		 
-//        String bestProvider = locationManager.getBestProvider(criteria, true);
-//
-//        if ((bestProvider != null) && (bestProvider.contains("gps"))){
-//        	locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
-//        }
-//        else{
-//        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        	builder.setMessage("No GPS!")
-//        	       .setCancelable(true)
-//        	       .setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
-//        	           public void onClick(DialogInterface dialog, int id) {
-//        	        	   Intent switchIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//        	               startActivityForResult(switchIntent, 0);
-//        	           }
-//        	       })
-//        	       .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-//        	           public void onClick(DialogInterface dialog, int id) {
-//        	        	   locationManager.removeUpdates(locationListener);
-//
-//	        	       	   String ns = Context.NOTIFICATION_SERVICE;
-//	        	       	   NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-//	        	       	   mNotificationManager.cancel(3);
-//
-//        	        	   finish();
-//        	           }
-//        	       });
-//        	AlertDialog alert = builder.create();
-//        	alert.show();
-//        }
-           	
-        //Toast.makeText(getApplicationContext(), "onStart", Toast.LENGTH_LONG).show();
-	}
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    	if (requestCode == Constants.PERMISSION.ACCESS_FINE_LOCATION) {
+    		// BEGIN_INCLUDE(permission_result)
+            // Received permission result for camera permission.
+            // Check if the only required permission has been granted
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            	// Camera permission has been granted, preview can be displayed
+                Intent startIntent = new Intent(MainActivity.this, MyService.class);
+			  	startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+				startService(startIntent);
+			} else {
+				Log.i(Constants.TAGS.TAG, "ACCESS_FINE_LOCATION permission was NOT granted.");
+                finish();
+              }
+		}
+    }
 
     public OnClickListener textClick = new OnClickListener () {
 
@@ -395,23 +327,10 @@ public class MainActivity extends AppCompatActivity  {
 		
 	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.d(Constants.TAGS.TAG, "mMessageReceiver");
 			// Get extra data included in the Intent
 			String message = intent.getStringExtra("message");
 			Log.d("receiver", "Got message: " + message);
@@ -419,7 +338,7 @@ public class MainActivity extends AppCompatActivity  {
             double lat = intent.getDoubleExtra("latitude",0);
             double lon= intent.getDoubleExtra("longitude",0);
             long time       = intent.getLongExtra("time",0);
-            int speed     = (int) intent.getDoubleExtra("speed",0);
+            double speed     = intent.getDoubleExtra("speed",0);
 			if(speed > 0) {
 				String state = max.getText().toString();
 				speed = (int) (speed * 3.6);
@@ -428,7 +347,7 @@ public class MainActivity extends AppCompatActivity  {
     				maxLat = "" + lat;
     				maxLong = "" + lon;
     				
-    				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
+    				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", (int)speed).apply();
 					
     				if (state.equals("maxSpeed")) {
     					speedText.setText("" + speed);
@@ -455,77 +374,4 @@ public class MainActivity extends AppCompatActivity  {
 			}
 		}
 	};
-	// public class MyLocationListener implements LocationListener{
-
-	// 	@SuppressLint("NewApi")
-	// 	@SuppressWarnings("deprecation")
-	// 	public void onLocationChanged(Location loc) {
-	// 		// TODO Auto-generated method stub
-	// 		if(loc.hasSpeed()){
-	// 			String state = max.getText().toString();
-	// 			speed = (int) (loc.getSpeed()* 3.6);
-	// 			if(speed>maxSpeed){
-	// 				maxSpeed=speed;
- //    				maxLat = "" + loc.getLatitude();
- //    				maxLong = "" + loc.getLongitude();
-    				
- //    				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
-					
- //    				Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
- //                .setSmallIcon(R.drawable.notification_icon)
- //        .setContentTitle("Saree3")
- //        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
- //        .setStyle(new NotificationCompat.BigTextStyle()
- //        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
- //        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
- //        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-	// 	.setOnlyAlertOnce(true)
- //        .setOngoing(false)
- //                .setChannelId(CHANNEL_ID)
- //                .build();
-    				
- //    				if (state.equals("maxSpeed")) {
- //    					speedText.setText("" + speed);
- //    				}
-    				
- //    				latitude.setText("latitude: " + loc.getLatitude());
- //    				longitude.setText("longitude: " + loc.getLongitude());
-    				
-	// 			}
-	// 			else {
-	// 				if (state.equals("currentSpeed")) {
- //    					speedText.setText("" + speed);
- //    					latitude.setText("latitude: " + loc.getLatitude());
- //        				longitude.setText("longitude: " + loc.getLongitude());
-        				
- //    				}
-    				
-	// 			}
-    			
-	// 		}
-			
-	// 		else{
-	// 			max.setText("No Speed Data !");
-	// 		}		
-			
-	// 	}
-
-	// 	public void onProviderDisabled(String provider) {
-	// 		// TODO Auto-generated method stub
-	// 		Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
-	// 	}
-
-	// 	public void onProviderEnabled(String provider) {
-	// 		// TODO Auto-generated method stub
-	// 		Toast.makeText(getApplicationContext(), "Gps Esabled", Toast.LENGTH_SHORT).show();
-	// 	}
-
-	// 	public void onStatusChanged(String provider, int status, Bundle extras) {
-	// 		// TODO Auto-generated method stub
-	// 		if(status!=2)
- //    			max.setText("No Gps !");
- //    			Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
-	// 	}
-		
-	// }
 }
