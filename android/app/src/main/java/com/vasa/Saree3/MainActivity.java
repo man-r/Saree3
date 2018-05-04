@@ -201,17 +201,11 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 				        	Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
 				            startActivityForResult(cameraIntent, 0);
 				            break;
-
-				        case R.id.startservice:
-				        	Intent startIntent = new Intent(MainActivity.this, MyService.class);
-			                startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-			                startService(startIntent);
+				        case R.id.fingerprint:
+				        	Intent fingerprintIntent = new Intent(getApplicationContext(), FingerprintActivity.class);
+				            fingerprintIntent.setFlags(fingerprintIntent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+				            startActivityForResult(fingerprintIntent, 0);
 				            break;
-				        case R.id.stopservice:
-				        	Intent stopIntent = new Intent(MainActivity.this, MyService.class);
-			                stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
-			                startService(stopIntent);
-			                break;
 				        default:
 				            break;
 				        	
@@ -289,7 +283,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
             // Check if the only required permission has been granted
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             	// Camera permission has been granted, preview can be displayed
-                Intent startIntent = new Intent(MainActivity.this, MyService.class);
+                Intent startIntent = new Intent(MainActivity.this, MyService2.class);
 			  	startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 				startService(startIntent);
 			} else {

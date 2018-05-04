@@ -24,6 +24,7 @@ public class Constants {
 		public static final int WRITE_EXTERNAL_STORAGE = 7;
 		public static final int CAMERA = 8;
 		public static final int RECORD_AUDIO = 9;
+		public static final int USE_FINGERPRINT = 10;
 	}
 
 	public interface NOTIFICATION {
