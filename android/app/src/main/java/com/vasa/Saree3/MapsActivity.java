@@ -7,24 +7,32 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.os.StrictMode;
+import android.os.SystemClock;
+import android.support.annotation.ColorRes;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
+import android.view.animation.Interpolator;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Dash;
@@ -34,15 +42,18 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends FragmentActivity 
     implements OnMapReadyCallback {
@@ -66,6 +77,9 @@ public class MapsActivity extends FragmentActivity
     
     AlertDialog.Builder closebuilder;
     AlertDialog.Builder chalangebuilder;
+
+    List<LatLng> listPoint;
+    int currentPt;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +93,8 @@ public class MapsActivity extends FragmentActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        listPoint = new ArrayList<LatLng>();
     }
 
 
@@ -94,6 +110,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.setBuildingsEnabled(true);
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -111,9 +128,18 @@ public class MapsActivity extends FragmentActivity
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
-                map.animateCamera(CameraUpdateFactory.newLatLng(point));
+                // map.animateCamera(CameraUpdateFactory.newLatLng(point));
 
-                request(point.latitude, point.longitude);
+                // request(point.latitude, point.longitude);
+                listPoint.clear();
+                listPoint.add(new LatLng(-35.016, 143.321));
+                listPoint.add(new LatLng(-34.747, 145.592));
+                listPoint.add(new LatLng(-34.364, 147.891));
+                listPoint.add(new LatLng(-33.501, 150.217));
+                listPoint.add(new LatLng(-32.306, 149.248));
+                listPoint.add(new LatLng(-32.491, 147.309));
+
+                startAnimaion();
             }
         });
         // GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
@@ -145,6 +171,64 @@ public class MapsActivity extends FragmentActivity
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney1, 16F));
 
         this.showCurvedPolyline(sydney1,sydney2, 0.5);
+
+        Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+                .clickable(true)
+                .add(
+                        new LatLng(-35.016, 143.321),
+                        new LatLng(-34.747, 145.592),
+                        new LatLng(-34.364, 147.891),
+                        new LatLng(-33.501, 150.217),
+                        new LatLng(-32.306, 149.248),
+                        new LatLng(-32.491, 147.309)));
+        
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.684, 133.903), 4));
+    }
+    GoogleMap.CancelableCallback mCancelableCallback = new GoogleMap.CancelableCallback() {
+
+        @Override
+        public void onFinish() {
+            if(++currentPt < listPoint.size()){
+                CameraPosition cameraPosition =
+                    new CameraPosition.Builder()
+                            .target(listPoint.get(currentPt))
+                            .bearing(45)
+                            .tilt(90)
+                            .zoom(17)
+                            .build();
+
+                map.animateCamera(
+                        CameraUpdateFactory.newCameraPosition(cameraPosition), 
+                        3000,
+                        mCancelableCallback
+                );
+            } 
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
+    void startAnimaion() {
+        
+        
+        currentPt = 0;
+        
+        CameraPosition cameraPosition =
+                new CameraPosition.Builder()
+                        .target(listPoint.get(currentPt))
+                        .bearing(45)
+                        .tilt(90)
+                        .zoom(17)
+                        .build();
+
+        map.animateCamera(
+                CameraUpdateFactory.newCameraPosition(cameraPosition), 
+                3000,
+                mCancelableCallback
+        );
     }
 
     private void showCurvedPolyline (LatLng p1, LatLng p2, double k) {
@@ -179,8 +263,44 @@ public class MapsActivity extends FragmentActivity
         }
 
         //Draw polyline
-        map.addPolyline(options.width(10).color(Color.MAGENTA).geodesic(false).pattern(pattern));
+        map.addPolyline(options.width(10).geodesic(false).pattern(pattern));
     }
+
+    protected Marker addMarker(LatLng position, boolean draggable) {
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.draggable(draggable);
+        markerOptions.position(position);
+        Marker pinnedMarker = map.addMarker(markerOptions);
+        startDropMarkerAnimation(pinnedMarker);
+        return pinnedMarker;
+    }
+    private void startDropMarkerAnimation(final Marker marker) {
+        final LatLng target = marker.getPosition();
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = map.getProjection();
+        Point targetPoint = proj.toScreenLocation(target);
+        final long duration = (long) (200 + (targetPoint.y * 0.6));
+        Point startPoint = proj.toScreenLocation(marker.getPosition());
+        startPoint.y = 0;
+        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        final Interpolator interpolator = new LinearOutSlowInInterpolator();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed / duration);
+                double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
+                double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
+                marker.setPosition(new LatLng(lat, lng));
+                if (t < 1.0) {
+                    // Post again 16ms later == 60 frames per second
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+    }
+    
     public void request(double lat, double lon){
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();

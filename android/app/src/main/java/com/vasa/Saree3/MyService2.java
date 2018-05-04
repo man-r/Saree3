@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -74,6 +75,7 @@ public class MyService2 extends Service {
     LocationCallback mLocationCallback;
 
     private PendingIntent transitionPendingIntent;
+    private PowerManager.WakeLock wl;
 
     @Override
     public void onCreate() {
@@ -157,6 +159,10 @@ public class MyService2 extends Service {
             Log.i(Constants.TAGS.TAG, "Received Start Foreground Intent ");
 
 
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "saree3");
+            wl.acquire();
+
             Intent notificationIntent = new Intent(this, MainActivity.class);
             notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -228,6 +234,7 @@ public class MyService2 extends Service {
         // The service is no longer used and is being destroyed
         super.onDestroy();
         Log.i(Constants.TAGS.TAG, "In onDestroy");
+        wl.release();
         stopLocationUpdates();
         stopActivityTransactionUpdates();
     }
@@ -274,17 +281,17 @@ public class MyService2 extends Service {
             .build());
 
 
-        transitions.add(
-          new ActivityTransition.Builder()
-            .setActivityType(DetectedActivity.ON_FOOT)
-            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-            .build());
+        // transitions.add(
+        //   new ActivityTransition.Builder()
+        //     .setActivityType(DetectedActivity.ON_FOOT)
+        //     .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+        //     .build());
 
-        transitions.add(
-          new ActivityTransition.Builder()
-            .setActivityType(DetectedActivity.ON_FOOT)
-            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-            .build());
+        // transitions.add(
+        //   new ActivityTransition.Builder()
+        //     .setActivityType(DetectedActivity.ON_FOOT)
+        //     .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+        //     .build());
         
         transitions.add(
           new ActivityTransition.Builder()
@@ -310,29 +317,29 @@ public class MyService2 extends Service {
             .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
             .build());
         
-        transitions.add(
-          new ActivityTransition.Builder()
-            .setActivityType(DetectedActivity.TILTING)
-            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-            .build());
+        // transitions.add(
+        //   new ActivityTransition.Builder()
+        //     .setActivityType(DetectedActivity.TILTING)
+        //     .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+        //     .build());
 
-        transitions.add(
-          new ActivityTransition.Builder()
-            .setActivityType(DetectedActivity.TILTING)
-            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-            .build());
+        // transitions.add(
+        //   new ActivityTransition.Builder()
+        //     .setActivityType(DetectedActivity.TILTING)
+        //     .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+        //     .build());
         
-        transitions.add(
-          new ActivityTransition.Builder()
-            .setActivityType(DetectedActivity.UNKNOWN)
-            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-            .build());
+        // transitions.add(
+        //   new ActivityTransition.Builder()
+        //     .setActivityType(DetectedActivity.UNKNOWN)
+        //     .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+        //     .build());
 
-        transitions.add(
-          new ActivityTransition.Builder()
-            .setActivityType(DetectedActivity.UNKNOWN)
-            .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-            .build());
+        // transitions.add(
+        //   new ActivityTransition.Builder()
+        //     .setActivityType(DetectedActivity.UNKNOWN)
+        //     .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+        //     .build());
 
         transitions.add(
           new ActivityTransition.Builder()
@@ -356,7 +363,7 @@ public class MyService2 extends Service {
             new OnSuccessListener<Void>() {
               @Override
               public void onSuccess(Void result) {
-                // Handle success
+                Toast.makeText(getApplicationContext(), "Transition update set up", Toast.LENGTH_LONG).show();
               }
             }
           );
@@ -365,7 +372,8 @@ public class MyService2 extends Service {
             new OnFailureListener() {
               @Override
               public void onFailure(Exception e) {
-                // Handle error
+                Toast.makeText(getApplicationContext(), "Transition update Failed to set up", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
               }
             }
           );

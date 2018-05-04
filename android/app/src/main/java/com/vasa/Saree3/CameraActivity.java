@@ -1,19 +1,25 @@
 package com.vasa.Saree3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.Build;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.Manifest;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -33,6 +39,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class CameraActivity extends FragmentActivity {
+
+    private DrawerLayout mDrawerLayout;
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -73,6 +81,65 @@ public class CameraActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    // set item as selected to persist highlight
+                    menuItem.setChecked(true);
+                    switch(menuItem.getItemId()){
+                        case R.id.close:
+
+                            break;
+                            
+                        case R.id.GPSSwitch:
+
+                            break;
+                            
+                        case R.id.share:
+
+                            break;
+                            
+                        case R.id.chalange:
+
+                            break;
+                            
+                        case R.id.pip:
+                            //Intent topIntent = new Intent(getApplicationContext(), TopTen.class);
+                            //startActivityForResult(topIntent, 0);
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                                enterPictureInPictureMode();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "feature avialble in android oreo and above", Toast.LENGTH_SHORT).show();
+                            }
+
+                            break;
+                        case R.id.map:
+                            Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
+                            startActivityForResult(mapIntent, 0);
+                            break;
+                        case R.id.camera:
+                            Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
+                            startActivityForResult(cameraIntent, 0);
+                            break;
+                            
+                        default:
+                            break;
+                            
+                        }
+                    // close drawer when item is tapped
+                    mDrawerLayout.closeDrawers();
+
+                    // Add code here to update the UI based on the item selected
+                    // For example, swap UI fragments here
+
+                    return true;
+                }
+            }
+        );
         // check for permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             getPermissions();
@@ -108,6 +175,9 @@ public class CameraActivity extends FragmentActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Camera permission has been granted, preview can be displayed
                 startCamera();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             } else {
                 Log.i(Constants.TAGS.TAG, "CAMERA permission was NOT granted.");
                 finish();
