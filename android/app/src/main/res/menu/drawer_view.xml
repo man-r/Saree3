@@ -32,17 +32,19 @@
             android:title="camera" >
         </item>
         <item
+            android:id="@+id/pip"
+            android:icon="@drawable/notification_icon"
+            android:title="PIP mode" >
+        </item>
+        <item
             android:id="@+id/close"
             android:icon="@drawable/notification_icon"
             android:title="close" >
         </item>
         <item
-            android:id="@+id/startservice"
-            android:title="startservice" >
-        </item>
-        <item
-            android:id="@+id/stopservice"
-            android:title="stopservice" >
+            android:id="@+id/fingerprint"
+            android:icon="@drawable/notification_icon"
+            android:title="fingerprint" >
         </item>
     </group>
 </menu>

@@ -8,6 +8,7 @@ public class Constants {
  		public static String NEXT_ACTION = "com.truiton.foregroundservice.action.next";
  		public static String STARTFOREGROUND_ACTION = "com.truiton.foregroundservice.action.startforeground";
  		public static String STOPFOREGROUND_ACTION = "com.truiton.foregroundservice.action.stopforeground";
+ 		public static String LOCATION_CHANGED_ACTION = "LOCATION_CHANGED_ACTION";
  	}
  
  	public interface NOTIFICATION_ID {
@@ -23,10 +24,16 @@ public class Constants {
 		public static final int WRITE_EXTERNAL_STORAGE = 7;
 		public static final int CAMERA = 8;
 		public static final int RECORD_AUDIO = 9;
+		public static final int USE_FINGERPRINT = 10;
 	}
 
 	public interface NOTIFICATION {
 		public static final String CHANNEL_ID = "my_channel_01";
+	}
+
+	public interface LOCATION {
+		public static final int MIN_DISTANCE = 1000;
+		public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 	}
 
 	public interface SQLLITE {
@@ -47,4 +54,8 @@ public class Constants {
 		public static final String SQL_DELETE_GEO =
     		"DROP TABLE IF EXISTS geo";
 	}
+
+	public interface TAGS {
+ 		public static final String TAG = "manar";
+ 	}
 }

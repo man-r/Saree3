@@ -5,13 +5,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 import android.location.LocationListener;
@@ -22,8 +25,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.onesignal.OSPermissionSubscriptionState;
+import com.onesignal.OneSignal;
+
+import org.json.JSONObject;
+
 public class MyService extends Service {
-    public static final String TAG = "manar";
+    
     SharedPreferences topSpeed;
     int maxSpeed;
     String maxLat;
@@ -42,14 +50,17 @@ public class MyService extends Service {
     Intent stopIntent;
     PendingIntent pstopIntent;
 
+    LocalBroadcastManager localBroadcastManager;
     LocationManager locationManager;
     LocationListener locationListener;
     Criteria criteria;
+
 
     @Override
     public void onCreate() {
         // The service is being created
         super.onCreate();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -63,7 +74,7 @@ public class MyService extends Service {
 
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Received Start Foreground Intent ");
+            Log.i(Constants.TAGS.TAG, "Received Start Foreground Intent ");
 
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -97,6 +108,30 @@ public class MyService extends Service {
             criteria = new Criteria();
             criteria.setSpeedRequired(true);
             criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    Constants.LOCATION.MIN_DISTANCE, locationListener);
+            }
+
+            //if GPS Enabled get lat/long using GPS Services
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    Constants.LOCATION.MIN_DISTANCE, locationListener);
+            }
+
+            // if (locationManager != null){
+            //     Location loc = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            //     if (loc !=null) {
+                    
+            //         JSONObject obj = getLocationObject(loc);
+            //         mCallbackContext.success(obj.toString());
+            //     }
+
+            // }
             
             String bestProvider = locationManager.getBestProvider(criteria, true);
 
@@ -107,21 +142,23 @@ public class MyService extends Service {
                     .setContentTitle("Saree3")
                     .setTicker("Saree3 Tracker")
                     .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-                    .setSmallIcon(R.drawable.icon)
-                    .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setOnlyAlertOnce(true)
                     .setContentIntent(pendingIntent)
                     .setOngoing(true)
                     .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
-                    .setChannelId(CHANNEL_ID)
+                    .setChannelId(CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
                     .build();
 
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+                    mChannel.setSound(null, null);
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-                locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+                locationManager.requestLocationUpdates(bestProvider, 0, Constants.LOCATION.MIN_DISTANCE, locationListener);
+                Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             }
             else{
                 CharSequence name = "Saree3";// The user-visible name of the channel.
@@ -141,6 +178,7 @@ public class MyService extends Service {
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                    mChannel.setSound(null, null);
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
@@ -149,16 +187,17 @@ public class MyService extends Service {
 
         } else if (intent.getAction().equals(Constants.ACTION.ENABLEGPS_ACTION)) {
             Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Clicked Previous");
+            Log.i(Constants.TAGS.TAG, "Clicked Previous");
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
             Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Clicked Play");
+            Log.i(Constants.TAGS.TAG, "Clicked Play");
         } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
             Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Clicked Next");
+            Log.i(Constants.TAGS.TAG, "Clicked Next");
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Received Stop Foreground Intent");
+            Log.i(Constants.TAGS.TAG, "Received Stop Foreground Intent");
+            locationManager.removeUpdates(locationListener);
             stopForeground(true);
             stopSelf();
         }
@@ -184,7 +223,7 @@ public class MyService extends Service {
     public void onDestroy() {
         // The service is no longer used and is being destroyed
         super.onDestroy();
-        Log.i(TAG, "In onDestroy");
+        Log.i(Constants.TAGS.TAG, "In onDestroy");
     }
 
 
@@ -192,8 +231,37 @@ public class MyService extends Service {
     public class MyLocationListener implements LocationListener{
 
         public void onLocationChanged(Location loc) {
-            // TODO Auto-generated method stub
+            // Gets the data repository in write mode
+            
+            OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
+            status.getSubscriptionStatus().getUserId();
+            GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(getApplicationContext());
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put("playerid", status.getSubscriptionStatus().getUserId());
+            values.put("latitude", loc.getLatitude()+"");
+            values.put("longitude", loc.getLongitude()+"");
+            values.put("altitude", loc.getAltitude()+"");
+            values.put("timestamp", loc.getTime() + "");
+            values.put("speed", loc.getSpeed() + "");
+            
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId = db.insert("geo", null, values);
+            //Toast.makeText(getApplicationContext(), newRowId + "newRowId inserted", Toast.LENGTH_LONG).show();
+            
+
+            // Create intent with action
+            Intent localIntent = new Intent(Constants.ACTION.LOCATION_CHANGED_ACTION);
+            localIntent.putExtra("altitude", loc.getAltitude());
+            localIntent.putExtra("latitude", loc.getLatitude());
+            localIntent.putExtra("longitude", loc.getLongitude());
+            localIntent.putExtra("time", loc.getTime());
+            localIntent.putExtra("speed", loc.getSpeed());
+            
             if(loc.hasSpeed()){
+                
                 int speed = (int) (loc.getSpeed()* 3.6);
                 if(speed>maxSpeed){
                     maxSpeed=speed;
@@ -214,12 +282,13 @@ public class MyService extends Service {
                         .setOngoing(true)
                         .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
                         .setChannelId(CHANNEL_ID)
-                        .setOnlyAlertOnce(true)
+                        .setOnlyAlertOnce(true).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
                         .build();
 
                     NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
+                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+                        mChannel.setSound(null, null);
                         mNotificationManager.createNotificationChannel(mChannel);
                     }
                         
@@ -232,8 +301,11 @@ public class MyService extends Service {
             
             else{
                 //max.setText("No Speed Data !");
-            }       
-            
+            }
+
+            // Send local broadcast
+            localBroadcastManager.sendBroadcast(localIntent);
+            Log.d(Constants.TAGS.TAG, "localBroadcastManager.sendBroadcast");
         }
 
         public void onProviderDisabled(String provider) {
