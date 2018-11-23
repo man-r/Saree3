@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
     	if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
     		getPermissions();
     	} else {
-	    	Intent startIntent = new Intent(MainActivity.this, MyService2.class);
+	    	Intent startIntent = new Intent(MainActivity.this, MyService.class);
 	  		startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 			startService(startIntent);
     	}
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
             // Check if the only required permission has been granted
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             	// Camera permission has been granted, preview can be displayed
-                Intent startIntent = new Intent(MainActivity.this, MyService2.class);
+                Intent startIntent = new Intent(MainActivity.this, MyService.class);
 			  	startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 				startService(startIntent);
 			} else {
