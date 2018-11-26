@@ -31,15 +31,15 @@ import com.onesignal.OneSignal;
 import org.json.JSONObject;
 
 public class MyService extends Service {
-    
+
     SharedPreferences topSpeed;
     int maxSpeed;
     String maxLat;
     String maxLong;
 
     String CHANNEL_ID = "manar";// The id of the channel.
-    int notifyID = 1; 
-    
+    int notifyID = 1;
+
     int mStartMode;       // indicates how to behave if the service is killed
     IBinder mBinder;      // interface for clients that bind
     boolean mAllowRebind; // indicates whether onRebind should be used
@@ -102,7 +102,7 @@ public class MyService extends Service {
 
             pstopIntent = PendingIntent.getService(this, 0, stopIntent, 0);
 
-            
+
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationListener = new MyLocationListener();
             criteria = new Criteria();
