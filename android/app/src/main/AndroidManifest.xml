@@ -62,6 +62,9 @@
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".GeoViewActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".GetPermission" />
 
         <service android:name=".MyService" />
@@ -84,7 +87,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".FingerprintActivity"></activity>
+        <activity android:name=".FingerprintActivity" />
     </application>
 
 </manifest>
