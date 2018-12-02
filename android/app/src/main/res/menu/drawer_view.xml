@@ -46,5 +46,10 @@
             android:icon="@drawable/notification_icon"
             android:title="fingerprint" >
         </item>
+        <item
+            android:id="@+id/dbview"
+            android:icon="@drawable/notification_icon"
+            android:title="geo view" >
+        </item>
     </group>
 </menu>

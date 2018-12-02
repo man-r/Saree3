@@ -206,6 +206,10 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 				            fingerprintIntent.setFlags(fingerprintIntent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 				            startActivityForResult(fingerprintIntent, 0);
 				            break;
+			            case R.id.dbview:
+				        	Intent dbviewIntent = new Intent(getApplicationContext(), GeoViewActivity.class);
+				            startActivityForResult(dbviewIntent, 0);
+				            break;
 				        default:
 				            break;
 				        	
