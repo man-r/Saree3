@@ -34,11 +34,34 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="player ID : "
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/geo_list_item_playerid"
+                    android:width="0dp"
+                    android:layout_weight="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:width="0dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="time : "
                     android:textSize="20dp"/>
 
                 <TextView
-                    android:id="@+id/geo_list_item_time"
+                    android:id="@+id/geo_list_item_timestamp"
                     android:width="0dp"
                     android:layout_weight="2"
                     android:layout_width="wrap_content"
