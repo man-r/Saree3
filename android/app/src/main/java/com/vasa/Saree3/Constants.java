@@ -49,7 +49,7 @@ public class Constants {
         public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
 
         public static final String SQL_CREATE_GEO =
-        	"CREATE TABLE geo (playerid TEXT,lat TEXT, long TEXT, alt TEXT, speed TEXT, timestamp TEXT)";
+        	"CREATE TABLE geo ( _id integer primary key autoincrement,playerid TEXT,lat TEXT, long TEXT, alt TEXT, speed TEXT, timestamp TEXT)";
 
 		public static final String SQL_DELETE_GEO =
     		"DROP TABLE IF EXISTS geo";

@@ -26,7 +26,8 @@ public class GeoViewActivity extends AppCompatActivity {
 	private SimpleCursorAdapter listViewDataAdapter = null;
 
     private final String fromColumnArr[] = {
-    	"playerid",
+    	"_id",
+        "playerid",
     	"latitude", 
     	"longitude",
     	"altitude",
@@ -34,7 +35,8 @@ public class GeoViewActivity extends AppCompatActivity {
         "speed"};
 
     private final int toViewIdArr[] = {
-    	R.id.geo_list_item_playerid,
+    	R.id.geo_list_item_geoid,
+        R.id.geo_list_item_playerid,
     	R.id.geo_list_item_latitude, 
     	R.id.geo_list_item_longitude,
     	R.id.geo_list_item_altitude,
@@ -51,7 +53,7 @@ public class GeoViewActivity extends AppCompatActivity {
         GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-		Cursor cursor = db.rawQuery ("SELECT * FROM geo",null);
+		Cursor cursor = db.rawQuery ("SELECT * FROM geo", null);
 
 		// Create a new SimpleCursorAdapter.
         listViewDataAdapter = new SimpleCursorAdapter(this, R.layout.geo_item_view, cursor,
