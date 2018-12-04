@@ -129,7 +129,8 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 		TextView act = (TextView)findViewById(R.id.act);
 		act.setText(cursor.getCount() + "");
 				
-        closebuilder = new AlertDialog.Builder(this);
+
+		closebuilder = new AlertDialog.Builder(this);
         closebuilder.setMessage("Are you sure you want to exit?")
 	       .setCancelable(false)
 	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 							if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 								enterPictureInPictureMode();
 							} else {
-								Toast.makeText(getApplicationContext(), "feature avialble in android oreo and above", Toast.LENGTH_SHORT).show();
+								// Toast.makeText(getApplicationContext(), "feature avialble in android oreo and above", Toast.LENGTH_SHORT).show();
 							}
 
 				            break;
@@ -245,8 +246,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
     	speedText.setText("" + maxSpeed);
 
 
-    	Log.d(Constants.TAGS.TAG, "localBroadcastManager.registerReceiver");
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(Constants.ACTION.LOCATION_CHANGED_ACTION));
+
 
     	// check for permission
     	if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -256,9 +256,23 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 	  		startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 			startService(startIntent);
     	}
-  		
 
+    }
 
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	Log.d(Constants.TAGS.SED_BROADCAST, "registerReceiver");
+		registerReceiver(
+			mMessageReceiver, 
+			new IntentFilter(Constants.ACTION.LOCATION_CHANGED_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+    	super.onPause();
+    	Log.d(Constants.TAGS.SED_BROADCAST, "unregisterReceiver");
+		unregisterReceiver(mMessageReceiver);
     }
 
     void getPermissions() {
@@ -320,7 +334,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 				longitude.setText("longitude:");
 		    	speedText.setText("0");
 		    }
-			else if (state.equals("currentSpeed")) {
+			else {
 				max.setText("maxSpeed");
 				latitude.setText("latitude: " + maxLat);
 		    	longitude.setText("longitude: " + maxLong);
@@ -333,7 +347,9 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 	BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.d(Constants.TAGS.TAG, "mMessageReceiver");
+			Log.d(Constants.TAGS.SED_BROADCAST, "mMessageReceiver");
+			
+			
 			// Get extra data included in the Intent
 			String message = intent.getStringExtra("message");
 			Log.d("receiver", "Got message: " + message);
@@ -342,7 +358,8 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
             double lon= intent.getDoubleExtra("longitude",0);
             long time       = intent.getLongExtra("time",0);
             double speed     = intent.getDoubleExtra("speed",0);
-			if(speed > 0) {
+            Log.d(Constants.TAGS.SED_BROADCAST, "speed: " + speed);
+			if(speed > 0.0) {
 				String state = max.getText().toString();
 				speed = (int) (speed * 3.6);
 				if(speed>maxSpeed){
@@ -371,7 +388,6 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 				}
     			
 			}
-			
 			else{
 				max.setText("No Speed Data !");
 			}

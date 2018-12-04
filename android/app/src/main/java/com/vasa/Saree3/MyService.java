@@ -59,11 +59,15 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         // The service is being created
+        Log.i(Constants.TAGS.TAG, "MyService onCreate");
+
         super.onCreate();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(Constants.TAGS.TAG, "MyService onStartCommand");
+
         // The service is starting, due to a call to startService()
         topSpeed = this.getSharedPreferences("topspeed", Context.MODE_PRIVATE);
         maxSpeed = topSpeed.getInt("topspeed",0);
@@ -73,7 +77,7 @@ public class MyService extends Service {
         icon = BitmapFactory.decodeResource(getResources(), R.drawable.notification_icon);
 
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Received Start Foreground Intent ");
 
 
@@ -111,7 +115,7 @@ public class MyService extends Service {
             if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER,
-                    0,
+                    Constants.LOCATION.MIN_DISTANCE,
                     Constants.LOCATION.MIN_DISTANCE, locationListener);
             }
 
@@ -119,7 +123,7 @@ public class MyService extends Service {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
-                    0,
+                    Constants.LOCATION.MIN_DISTANCE,
                     Constants.LOCATION.MIN_DISTANCE, locationListener);
             }
 
@@ -158,7 +162,7 @@ public class MyService extends Service {
                 }
                 startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
                 locationManager.requestLocationUpdates(bestProvider, 0, Constants.LOCATION.MIN_DISTANCE, locationListener);
-                Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             }
             else{
                 CharSequence name = "Saree3";// The user-visible name of the channel.
@@ -186,16 +190,16 @@ public class MyService extends Service {
 
 
         } else if (intent.getAction().equals(Constants.ACTION.ENABLEGPS_ACTION)) {
-            Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Clicked Previous");
         } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Clicked Play");
         } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
-            Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Clicked Next");
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
-            Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Received Stop Foreground Intent");
             locationManager.removeUpdates(locationListener);
             stopForeground(true);
@@ -249,17 +253,24 @@ public class MyService extends Service {
             
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert("geo", null, values);
-            //Toast.makeText(getApplicationContext(), newRowId + "newRowId inserted", Toast.LENGTH_LONG).show();
+            //// Toast.makeText(getApplicationContext(), newRowId + "newRowId inserted", Toast.LENGTH_LONG).show();
             
 
             // Create intent with action
-            Intent localIntent = new Intent(Constants.ACTION.LOCATION_CHANGED_ACTION);
+            Intent localIntent = new Intent();
+            
+            localIntent.setAction(Constants.ACTION.LOCATION_CHANGED_ACTION);
             localIntent.putExtra("altitude", loc.getAltitude());
             localIntent.putExtra("latitude", loc.getLatitude());
             localIntent.putExtra("longitude", loc.getLongitude());
             localIntent.putExtra("time", loc.getTime());
             localIntent.putExtra("speed", loc.getSpeed());
             
+            // Send local broadcast
+            sendBroadcast(localIntent);
+            Log.d(Constants.TAGS.TAG, "localBroadcastManager.sendBroadcast");
+
+
             if(loc.hasSpeed()){
                 
                 int speed = (int) (loc.getSpeed()* 3.6);
@@ -293,24 +304,28 @@ public class MyService extends Service {
                     }
                         
                 }
-                else {
-                    
-                }
-                
-            }
-            
-            else{
-                //max.setText("No Speed Data !");
-            }
-
-            // Send local broadcast
-            localBroadcastManager.sendBroadcast(localIntent);
-            Log.d(Constants.TAGS.TAG, "localBroadcastManager.sendBroadcast");
+            }            
         }
 
         public void onProviderDisabled(String provider) {
             // TODO Auto-generated method stub
-            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+            // Create intent with action
+            Intent localIntent = new Intent();
+            
+            double d = 9.99999;
+            long l = (long) 99999999;
+            localIntent.setAction(Constants.ACTION.LOCATION_CHANGED_ACTION);
+            localIntent.putExtra("altitude", d);
+            localIntent.putExtra("latitude", d);
+            localIntent.putExtra("longitude", d);
+            localIntent.putExtra("time", l);
+            localIntent.putExtra("speed", d);
+            
+            // Send local broadcast
+            sendBroadcast(localIntent);
+            Log.d(Constants.TAGS.SED_BROADCAST, "onProviderDisabled");
+            
+            //Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
             Intent startIntent = new Intent(getApplicationContext(), MyService.class);
             startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             startService(startIntent);
@@ -318,7 +333,7 @@ public class MyService extends Service {
 
         public void onProviderEnabled(String provider) {
             // TODO Auto-generated method stub
-            Toast.makeText(getApplicationContext(), "Gps Esabled", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getApplicationContext(), "Gps Esabled", Toast.LENGTH_SHORT).show();
             Intent startIntent = new Intent(getApplicationContext(), MyService.class);
             startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             startService(startIntent);
@@ -326,8 +341,8 @@ public class MyService extends Service {
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
             // TODO Auto-generated method stub
-            if(status!=2)
-                Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
+            //if(status!=2)
+                // Toast.makeText(getApplicationContext(), "No Gps !", Toast.LENGTH_SHORT).show();
         }
         
     }

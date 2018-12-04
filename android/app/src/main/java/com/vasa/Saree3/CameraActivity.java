@@ -113,7 +113,7 @@ public class CameraActivity extends FragmentActivity {
                             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                                 enterPictureInPictureMode();
                             } else {
-                                Toast.makeText(getApplicationContext(), "feature avialble in android oreo and above", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getApplicationContext(), "feature avialble in android oreo and above", Toast.LENGTH_SHORT).show();
                             }
 
                             break;

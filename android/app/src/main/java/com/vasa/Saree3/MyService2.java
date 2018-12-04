@@ -155,7 +155,7 @@ public class MyService2 extends Service {
         icon = BitmapFactory.decodeResource(getResources(), R.drawable.notification_icon);
 
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Received Start Foreground Intent ", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Received Start Foreground Intent ");
 
 
@@ -199,14 +199,14 @@ public class MyService2 extends Service {
             startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
             startLocationUpdates();
             startActivityTransactionUpdates();
-            Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             
 
         } else if (intent.getAction().equals(Constants.ACTION.ENABLEGPS_ACTION)) {
-            Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Clicked Previous");
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
-            Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Received Stop Foreground Intent", Toast.LENGTH_SHORT).show();
             Log.i(Constants.TAGS.TAG, "Received Stop Foreground Intent");
             stopForeground(true);
             stopSelf();
@@ -363,7 +363,7 @@ public class MyService2 extends Service {
             new OnSuccessListener<Void>() {
               @Override
               public void onSuccess(Void result) {
-                Toast.makeText(getApplicationContext(), "Transition update set up", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), "Transition update set up", Toast.LENGTH_LONG).show();
               }
             }
           );
@@ -372,7 +372,7 @@ public class MyService2 extends Service {
             new OnFailureListener() {
               @Override
               public void onFailure(Exception e) {
-                Toast.makeText(getApplicationContext(), "Transition update Failed to set up", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), "Transition update Failed to set up", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
               }
             }

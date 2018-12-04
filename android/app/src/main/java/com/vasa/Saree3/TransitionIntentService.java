@@ -42,7 +42,7 @@ public class TransitionIntentService extends IntentService {
                     // Insert the new row, returning the primary key value of the new row
                     long newRowId = db.insert("activity", null, values);
                     
-                    Toast.makeText(this, event.getTransitionType() + "-" + event.getActivityType(), Toast.LENGTH_LONG).show();
+                    // Toast.makeText(this, event.getTransitionType() + "-" + event.getActivityType(), Toast.LENGTH_LONG).show();
                     //7 for walking and 8 for running
                     Log.i(Constants.TAGS.TAG, "Activity Type " + event.getActivityType());
 

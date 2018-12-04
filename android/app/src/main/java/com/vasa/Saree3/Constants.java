@@ -57,5 +57,6 @@ public class Constants {
 
 	public interface TAGS {
  		public static final String TAG = "manar";
+ 		public static final String SED_BROADCAST = "SED_BROADCAST";
  	}
 }
