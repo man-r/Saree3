@@ -9,92 +9,132 @@
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
     <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:stretchColumns="2">
-            <TableRow>
-                <TextView
-                    android:id="@+id/latitude"  
-                    android:layout_width="wrap_content" 
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/latitude"
-                    android:fontFamily="@font/digital"
-                />
-            </TableRow>
-            <TableRow>
-                <TextView
-                    android:id="@+id/longitude"  
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/longitude" 
-                    android:fontFamily="@font/digital"
-                />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:stretchColumns="2"
+        >
+            <TableRow
+                android:gravity="center"
+                android:background="@drawable/table_row_bg">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Current Speed"
+                        android:fontFamily="@font/digital"
+                        android:textSize="50sp"
+                        />
+                    <TextView
+                        android:id="@+id/currentspeed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textSize="100sp"
+                        android:text="0.0"
+                        android:padding="3dip"
+                        android:fontFamily="@font/digital"
+                        />
+                    <TextView
+                        android:id="@+id/currentspeedlatitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lat: -"
+                        android:fontFamily="@font/digital"
+                        />
+                    <TextView
+                        android:id="@+id/currentspeedlongitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lon: -"
+                        android:fontFamily="@font/digital"
+                        />
+                </LinearLayout>
             </TableRow>
             <TableRow
-                android:gravity="center_horizontal"
-                android:layout_width="fill_parent"
-                >
-                <TextView
-                    android:layout_column="0"
-                    android:id="@+id/speed"
-                    android:gravity="center_horizontal"
-                    android:textSize="171sp"
-                    android:text="@string/speed"
-                    android:padding="3dip" 
-                    android:fontFamily="@font/digital"
-                />
-                <TextView
-                    android:layout_column="1"
-                    android:id="@+id/kmh"
-                    android:textSize="51sp"
-                    android:gravity="left"
-                    android:text="@string/kmh"
-                    android:textStyle="bold" 
-                    android:padding="3dip" 
-                    android:fontFamily="@font/digital"
-                />
-            
+                android:gravity="center"
+                android:background="@drawable/table_row_bg">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Max Speed"
+                        android:fontFamily="@font/digital"
+                        android:textSize="50sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/maxspeed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/digital"
+                        android:gravity="center_horizontal"
+                        android:padding="3dip"
+                        android:text="0.0"
+                        android:textSize="100sp" />
+                    <TextView
+                        android:id="@+id/maxspeedlatitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lat: -"
+                        android:fontFamily="@font/digital"
+                        />
+                    <TextView
+                        android:id="@+id/maxspeedlongitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lon: -"
+                        android:fontFamily="@font/digital"
+                        />
+                </LinearLayout>
             </TableRow>
+
             <TableRow
-                android:gravity="bottom|center_horizontal"
+                android:gravity="center"
+                android:background="@drawable/table_row_bg"
                 >
                 <TextView
                     android:id="@+id/maxSpeed"  
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="41sp"
-                    android:text="@string/maxspeed"
+                    android:text="Saree3"
                     android:gravity="center"
                     android:fontFamily="@font/digital"
                 />
                 
             </TableRow>
             <TableRow
-                android:gravity="bottom|center_horizontal"
+                android:gravity="center"
+                android:background="@drawable/table_row_bg"
                 >
                 <TextView
-                    android:id="@+id/geopoints"  
-                    android:layout_width="wrap_content" 
+                    android:id="@+id/geopoints"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/latitude"
-                    android:fontFamily="@font/digital"
-                />
-
-                <TextView
-                    android:id="@+id/act"  
-                    android:layout_width="wrap_content" 
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/latitude"
+                    android:textSize="41sp"
+                    android:text="Saree3"
+                    android:gravity="center"
                     android:fontFamily="@font/digital"
                 />
                 
             </TableRow>
-
-            
     </TableLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->

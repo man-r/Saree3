@@ -33,7 +33,7 @@ public class Constants {
 
 	public interface LOCATION {
 		public static final int MIN_DISTANCE = 1000;
-		public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+		public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 0;
 	}
 
 	public interface SQLLITE {

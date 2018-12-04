@@ -62,18 +62,21 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 
     private DrawerLayout mDrawerLayout;
 
-	TextView latitude;
-	TextView longitude;
-	TextView speedText;
-	TextView kmh;
-	TextView max;
+		
+	TextView currentspeed;
+	TextView currentspeedlatitude;
+	TextView currentspeedlongitude;
+
+	TextView maxspeed;
+	TextView maxspeedlatitude;
+	TextView maxspeedlongitude;
 	
-	
-	String maxLat="";
+	double currentSpeed = 0.0;
+
+	String maxLat = "";
 	String maxLong = "";
+	double maxSpeedValue = 0;
 	
-	double maxSpeed=0;
-	double speed=0;
 	
 	String phoneNumber = null;
     
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 	LocationListener locationListener;
 	Criteria criteria;
 	
-	SharedPreferences topSpeed;
+	SharedPreferences savedMaxSpeed;
 	
 	AlertDialog.Builder closebuilder;
 	AlertDialog.Builder chalangebuilder;
@@ -93,30 +96,34 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        
-        latitude = (TextView)findViewById(R.id.latitude);
-    	longitude = (TextView)findViewById(R.id.longitude);
-    	speedText = (TextView)findViewById(R.id.speed);
-    	kmh = (TextView)findViewById(R.id.kmh);
-    	max = (TextView)findViewById(R.id.maxSpeed);
+
+    	currentspeed = (TextView)findViewById(R.id.currentspeed);
+		currentspeedlatitude = (TextView)findViewById(R.id.currentspeedlatitude);
+		currentspeedlongitude = (TextView)findViewById(R.id.currentspeedlongitude);
+
+		maxspeed = (TextView)findViewById(R.id.maxspeed);
+		maxspeedlatitude = (TextView)findViewById(R.id.maxspeedlatitude);
+		maxspeedlongitude = (TextView)findViewById(R.id.maxspeedlongitude);
+
+
+    	// Typeface font = Typeface.createFromAsset(getAssets(), "d10re.ttf");
+     	// ((TextView)findViewById(R.id.speed)).setTypeface(font);
+    	// ((TextView)findViewById(R.id.maxSpeed)).setTypeface(font);
+    	// ((TextView)findViewById(R.id.kmh)).setTypeface(font);
+    	// latitude.setOnClickListener(textClick);
+    	// longitude.setOnClickListener(textClick);
+    	// speedText.setOnClickListener(textClick);
+    	// kmh.setOnClickListener(textClick);
+    	// max.setOnClickListener(textClick);
     	
-    	Typeface font = Typeface.createFromAsset(getAssets(), "d10re.ttf");
-        ((TextView)findViewById(R.id.speed)).setTypeface(font);
-        ((TextView)findViewById(R.id.maxSpeed)).setTypeface(font);
-        ((TextView)findViewById(R.id.kmh)).setTypeface(font);
-    	latitude.setOnClickListener(textClick);
-    	longitude.setOnClickListener(textClick);
-    	speedText.setOnClickListener(textClick);
-    	kmh.setOnClickListener(textClick);
-    	max.setOnClickListener(textClick);
     	
+    	// kmh.setText("");       
     	
-    	kmh.setText("");       
-    	
-        topSpeed = this.getSharedPreferences("topspeed", Context.MODE_PRIVATE);
-		maxSpeed = topSpeed.getInt("topspeed",0);
-		maxLat = topSpeed.getString("lat", "0");
-		maxLong  = topSpeed.getString("long", "0");
+        savedMaxSpeed = this.getSharedPreferences("savedMaxSpeed", Context.MODE_PRIVATE);
+		maxSpeedValue = savedMaxSpeed.getInt("savedMaxSpeed",0);
+		maxLat = savedMaxSpeed.getString("lat", "0");
+		maxLong  = savedMaxSpeed.getString("long", "0");
+
 
         GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -125,10 +132,11 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 		TextView geopoints = (TextView)findViewById(R.id.geopoints);
 		geopoints.setText(cursor.getCount() + "");
 
-		cursor = db.rawQuery ("SELECT * FROM activity",null);
-		TextView act = (TextView)findViewById(R.id.act);
-		act.setText(cursor.getCount() + "");
-				
+
+		maxspeed.setText("" + maxSpeedValue);
+		maxspeedlatitude.setText("Lat: " + maxLat);
+		maxspeedlongitude.setText("Lon: " + maxLong);
+
 
 		closebuilder = new AlertDialog.Builder(this);
         closebuilder.setMessage("Are you sure you want to exit?")
@@ -167,7 +175,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 				            
 				        case R.id.share:
 				        	String message = "my top speed is:\n";
-							message = message + "speed:" + maxSpeed + "\n";
+							message = message + "speed:" + maxSpeedValue + "\n";
 							message = message + "http://maps.google.com/maps?q=" + maxLat + "," + maxLong + "\n";
 							message = message + "this message is sent from saree3";
 
@@ -229,9 +237,9 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), Constants.NOTIFICATION.CHANNEL_ID)
         	.setSmallIcon(R.drawable.notification_icon)
 	        .setContentTitle("Saree3")
-	        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+	        .setContentText("maxSpeed= " + maxSpeedValue + " Km/h")
 	        .setStyle(new NotificationCompat.BigTextStyle()
-	        .bigText("maxSpeed= " + maxSpeed + " Km/h"))
+	        .bigText("maxSpeed= " + maxSpeedValue + " Km/h"))
 	        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 	        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
 			.setOnlyAlertOnce(true)
@@ -239,16 +247,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
             .setChannelId(Constants.NOTIFICATION.CHANNEL_ID)
             .build();
 
-		
-
-        latitude.setText("latitude: " + maxLat);
-    	longitude.setText("longitude: " + maxLong);
-    	speedText.setText("" + maxSpeed);
-
-
-
-
-    	// check for permission
+		// check for permission
     	if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
     		getPermissions();
     	} else {
@@ -322,24 +321,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 			TextView geopoints = (TextView)findViewById(R.id.geopoints);
 			geopoints.setText(cursor.getCount() + "");
 
-			cursor = db.rawQuery ("SELECT * FROM activity",null);
-			TextView act = (TextView)findViewById(R.id.act);
-			act.setText(cursor.getCount() + "");
-
 			cursor.close();
-			String state = max.getText().toString();
-			if (state.equals("maxSpeed")) {
-				max.setText("currentSpeed");
-				latitude.setText("latitude:");
-				longitude.setText("longitude:");
-		    	speedText.setText("0");
-		    }
-			else {
-				max.setText("maxSpeed");
-				latitude.setText("latitude: " + maxLat);
-		    	longitude.setText("longitude: " + maxLong);
-		    	speedText.setText("" + maxSpeed);
-			}
 		}
 		
 	};
@@ -348,49 +330,39 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.d(Constants.TAGS.SED_BROADCAST, "mMessageReceiver");
-			
-			
+
 			// Get extra data included in the Intent
 			String message = intent.getStringExtra("message");
 			Log.d("receiver", "Got message: " + message);
+
 			double alt = intent.getDoubleExtra("altitude",0);
             double lat = intent.getDoubleExtra("latitude",0);
-            double lon= intent.getDoubleExtra("longitude",0);
-            long time       = intent.getLongExtra("time",0);
-            double speed     = intent.getDoubleExtra("speed",0);
+            double lon = intent.getDoubleExtra("longitude",0);
+            long time = intent.getLongExtra("time",0);
+            double speed = intent.getDoubleExtra("speed",0);
+
             Log.d(Constants.TAGS.SED_BROADCAST, "speed: " + speed);
+			
 			if(speed > 0.0) {
-				String state = max.getText().toString();
 				speed = (int) (speed * 3.6);
-				if(speed>maxSpeed){
-					maxSpeed=speed;
+				if(speed > maxSpeedValue){
+					maxSpeedValue = speed;
     				maxLat = "" + lat;
     				maxLong = "" + lon;
     				
-    				topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", (int)speed).apply();
-					
-    				if (state.equals("maxSpeed")) {
-    					speedText.setText("" + speed);
-    				}
-    				
-    				latitude.setText("latitude: " + lat);
-    				longitude.setText("longitude: " + lon);
-    				
+    				savedMaxSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("savedMaxSpeed", (int)speed).apply();
+
 				}
-				else {
-					if (state.equals("currentSpeed")) {
-    					speedText.setText("" + speed);
-    					latitude.setText("latitude: " + lat);
-        				longitude.setText("longitude: " + lon);
-        				
-    				}
-    				
-				}
-    			
 			}
-			else{
-				max.setText("No Speed Data !");
-			}
+
+            currentspeed.setText("" + speed);
+            currentspeedlatitude.setText("lat: " + lat);
+            currentspeedlongitude.setText("lon: " + lon);
+
+            maxspeed.setText("" + maxSpeedValue);
+            maxspeedlatitude.setText("" + maxLat);
+            maxspeedlongitude.setText("" + maxLong);
+
 		}
 	};
 }
