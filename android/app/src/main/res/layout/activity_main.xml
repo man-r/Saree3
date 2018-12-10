@@ -16,7 +16,7 @@
         >
             <TableRow
                 android:gravity="center"
-                android:background="@drawable/table_row_bg">
+                >
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -61,7 +61,7 @@
             </TableRow>
             <TableRow
                 android:gravity="center"
-                android:background="@drawable/table_row_bg">
+                >
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
 
             <TableRow
                 android:gravity="center"
-                android:background="@drawable/table_row_bg"
+                
                 >
                 <TextView
                     android:id="@+id/maxSpeed"  
@@ -122,7 +122,7 @@
             </TableRow>
             <TableRow
                 android:gravity="center"
-                android:background="@drawable/table_row_bg"
+                
                 >
                 <TextView
                     android:id="@+id/geopoints"

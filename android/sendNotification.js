@@ -1,0 +1,38 @@
+var sendNotification = function(data) {
+  var headers = {
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Basic MDEyNmVkZDgtZmJhOS00NDYzLWFiMTAtZDQ3ZGNkOWY5ZGZl"
+  };
+  
+  var options = {
+    host: "onesignal.com",
+    port: 443,
+    path: "/api/v1/notifications",
+    method: "POST",
+    headers: headers
+  };
+  
+  var https = require('https');
+  var req = https.request(options, function(res) {  
+    res.on('data', function(data) {
+      console.log("Response:");
+      console.log(JSON.parse(data));
+    });
+  });
+  
+  req.on('error', function(e) {
+    console.log("ERROR:");
+    console.log(e);
+  });
+  
+  req.write(JSON.stringify(data));
+  req.end();
+};
+
+var message = { 
+  app_id: "bc75391b-17c9-4ea0-ad32-d5832cf8f9b9",
+  contents: {"en": "English Message"},
+  included_segments: ["All"]
+};
+
+sendNotification(message);
