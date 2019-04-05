@@ -48,4 +48,5 @@ dependencies {
     implementation 'com.onesignal:OneSignal:[3.8.3, 3.99.99]'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.google.maps.android:android-maps-utils:0.4+'
+    compile 'com.evrencoskun.library:tableview:0.8.8'
 }

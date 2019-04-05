@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 
 			// Get extra data included in the Intent
 			String message = intent.getStringExtra("message");
-			Log.d("receiver", "Got message: " + message);
+			Log.d(Constants.TAGS.SED_BROADCAST, "Got message: " + message);
 
 			double alt = intent.getDoubleExtra("altitude",0);
             double lat = intent.getDoubleExtra("latitude",0);

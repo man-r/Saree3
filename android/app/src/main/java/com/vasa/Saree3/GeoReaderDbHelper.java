@@ -1,8 +1,12 @@
 package com.vasa.Saree3;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GeoReaderDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
@@ -46,5 +50,26 @@ public class GeoReaderDbHelper extends SQLiteOpenHelper {
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    // Get User Details
+    public ArrayList<HashMap<String, String>> GetGeo(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<HashMap<String, String>> userList = new ArrayList<>();
+        String query = "SELECT name, location, designation FROM "+ TABLE_NAME;
+        Cursor cursor = db.rawQuery(query,null);
+        while (cursor.moveToNext()){
+            HashMap<String,String> user = new HashMap<>();
+            user.put("_id",cursor.getString(cursor.getColumnIndex("_id")));
+            user.put("playerid",cursor.getString(cursor.getColumnIndex("playerid")));
+            user.put("latitude",cursor.getString(cursor.getColumnIndex("latitude")));
+            user.put("longitude",cursor.getString(cursor.getColumnIndex("longitude")));
+            user.put("altitude",cursor.getString(cursor.getColumnIndex("altitude")));
+            user.put("speed",cursor.getString(cursor.getColumnIndex("speed")));
+            user.put("timestamp",cursor.getString(cursor.getColumnIndex("timestamp")));
+            user.put("createtime",cursor.getString(cursor.getColumnIndex("createtime")));
+            userList.add(user);
+        }
+        return  userList;
     }
 }
