@@ -264,7 +264,7 @@ public class MyService extends Service {
             localIntent.putExtra("latitude", loc.getLatitude());
             localIntent.putExtra("longitude", loc.getLongitude());
             localIntent.putExtra("time", loc.getTime());
-            localIntent.putExtra("speed", loc.getSpeed());
+            localIntent.putExtra("speed", loc.getSpeed() + "");
             
             // Send local broadcast
             sendBroadcast(localIntent);

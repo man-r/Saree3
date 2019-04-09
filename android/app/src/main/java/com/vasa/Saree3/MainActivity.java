@@ -1,63 +1,37 @@
 package com.vasa.Saree3;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Window;
-import android.widget.TextView;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.Criteria;
-import android.content.SharedPreferences;
-import android.os.PowerManager;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.graphics.Typeface;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
+import android.view.Window;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.app.NotificationChannel;
-import android.os.Build;
-import android.support.design.widget.NavigationView;
-import android.Manifest;
 
 public class MainActivity extends AppCompatActivity  implements ActivityCompat.OnRequestPermissionsResultCallback {
-	
+
 	public static final String PREFS_NAME = "MyPrefsFile";
 
     private DrawerLayout mDrawerLayout;
@@ -323,7 +297,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 
 			cursor.close();
 		}
-		
+
 	};
 
 	BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -339,7 +313,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
             double lat = intent.getDoubleExtra("latitude",0);
             double lon = intent.getDoubleExtra("longitude",0);
             long time = intent.getLongExtra("time",0);
-            double speed = intent.getDoubleExtra("speed",0);
+            float speed = intent.getFloatExtra("speed",0);
 
             Log.d(Constants.TAGS.SED_BROADCAST, "speed: " + speed);
 			
@@ -350,7 +324,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
     				maxLat = "" + lat;
     				maxLong = "" + lon;
     				
-    				savedMaxSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("savedMaxSpeed", (int)speed).apply();
+    				//savedMaxSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("savedMaxSpeed", (int)speed).apply();
 
 				}
 			}
