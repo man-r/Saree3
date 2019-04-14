@@ -20,8 +20,8 @@ android {
         applicationId "com.vasa.Saree3"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 8
-        versionName "8.0"
+        versionCode 9
+        versionName "8.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
                 onesignal_app_id               : 'bc75391b-17c9-4ea0-ad32-d5832cf8f9b9',

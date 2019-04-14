@@ -69,7 +69,6 @@
         <activity android:name=".GetPermission" />
 
         <service android:name=".MyService" />
-        <service android:name=".MyService2" />
         <service
             android:name=".MyNotificationExtender"
             android:exported="false"
