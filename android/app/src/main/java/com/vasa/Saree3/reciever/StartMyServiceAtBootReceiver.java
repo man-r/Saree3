@@ -6,7 +6,6 @@ import android.content.Intent;
 
 import com.vasa.Saree3.Constants;
 import com.vasa.Saree3.MyService;
-import com.vasa.Saree3.MyService2;
 
 public class StartMyServiceAtBootReceiver extends BroadcastReceiver {
 

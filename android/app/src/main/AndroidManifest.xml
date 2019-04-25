@@ -68,8 +68,7 @@
         <activity android:name=".GetPermission" />
 
         <service android:name=".MyService" />
-        <service android:name=".MyService2" />
-
+        
         <receiver
             android:name=".reciever.StartMyServiceAtBootReceiver"
             android:enabled="true"
