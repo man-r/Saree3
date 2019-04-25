@@ -25,11 +25,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-import com.onesignal.OSPermissionSubscriptionState;
-import com.onesignal.OneSignal;
-
 import org.json.JSONObject;
 
+import android.provider.Settings.Secure;
 public class MyService extends Service {
 
     SharedPreferences topSpeed;
@@ -237,14 +235,13 @@ public class MyService extends Service {
         public void onLocationChanged(Location loc) {
             // Gets the data repository in write mode
             
-            OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
-            status.getSubscriptionStatus().getUserId();
+            String android_id = Secure.getString(getApplicationContext().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(getApplicationContext());
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
             // Create a new map of values, where column names are the keys
             ContentValues values = new ContentValues();
-            values.put("playerid", status.getSubscriptionStatus().getUserId());
+            values.put("playerid", android_id);
             values.put("latitude", loc.getLatitude()+"");
             values.put("longitude", loc.getLongitude()+"");
             values.put("altitude", loc.getAltitude()+"");

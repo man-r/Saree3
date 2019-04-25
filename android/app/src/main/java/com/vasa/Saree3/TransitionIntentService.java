@@ -9,9 +9,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionResult;
-import com.onesignal.OSPermissionSubscriptionState;
-import com.onesignal.OneSignal;
 
+import android.provider.Settings.Secure;
 
 public class TransitionIntentService extends IntentService {
 
@@ -26,14 +25,13 @@ public class TransitionIntentService extends IntentService {
                 ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
                 for (ActivityTransitionEvent event : result.getTransitionEvents()) {
 
-                    OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
-                    status.getSubscriptionStatus().getUserId();
                     GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(getApplicationContext());
                     SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+                    String android_id = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
                     // Create a new map of values, where column names are the keys
                     ContentValues values = new ContentValues();
-                    values.put("playerid", status.getSubscriptionStatus().getUserId());
+                    values.put("playerid", android_id);
                     values.put("act_type", event.getActivityType()+"");
                     values.put("transition_type", event.getTransitionType()+"");
                     values.put("elapsed_realtime", event.getElapsedRealTimeNanos()+"");

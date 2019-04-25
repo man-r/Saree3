@@ -30,8 +30,6 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
-import com.onesignal.OSPermissionSubscriptionState;
-import com.onesignal.OneSignal;
 
 import org.json.JSONException;
 import org.json.JSONObject;

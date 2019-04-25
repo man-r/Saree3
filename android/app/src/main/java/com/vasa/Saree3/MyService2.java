@@ -41,8 +41,6 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.onesignal.OSPermissionSubscriptionState;
-import com.onesignal.OneSignal;
 
 import org.json.JSONObject;
 
@@ -94,14 +92,13 @@ public class MyService2 extends Service {
                 }
                 
                 for (Location loc : locationResult.getLocations()) {
-                    OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
-                    status.getSubscriptionStatus().getUserId();
+                    String android_id = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
                     GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(getApplicationContext());
                     SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
                     // Create a new map of values, where column names are the keys
                     ContentValues values = new ContentValues();
-                    values.put("playerid", status.getSubscriptionStatus().getUserId());
+                    values.put("playerid", android_id);
                     values.put("latitude", loc.getLatitude()+"");
                     values.put("longitude", loc.getLongitude()+"");
                     values.put("altitude", loc.getAltitude()+"");
