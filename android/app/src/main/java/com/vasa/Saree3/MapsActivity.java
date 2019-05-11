@@ -1,34 +1,21 @@
 package com.vasa.Saree3;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.os.SystemClock;
-import android.support.annotation.ColorRes;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
 import android.view.animation.Interpolator;
-import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.util.MapUtils;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,14 +33,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends FragmentActivity 
     implements OnMapReadyCallback {
@@ -299,66 +281,6 @@ public class MapsActivity extends FragmentActivity
                 }
             }
         });
-    }
-    
-    public void request(double lat, double lon){
-        int PLACE_PICKER_REQUEST = 1;
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
-        try {
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-
-        // try {
-        //     String jsonResponse;
-
-        //     URL url = new URL("https://onesignal.com/api/v1/notifications");
-        //     HttpURLConnection con = (HttpURLConnection)url.openConnection();
-        //     con.setUseCaches(false);
-        //     con.setDoOutput(true);
-        //     con.setDoInput(true);
-
-        //     con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        //     con.setRequestProperty("Authorization", "Basic MDEyNmVkZDgtZmJhOS00NDYzLWFiMTAtZDQ3ZGNkOWY5ZGZl");
-        //     con.setRequestMethod("POST");
-
-        //     String strJsonBody = "{"
-        //               +   "\"app_id\": \"bc75391b-17c9-4ea0-ad32-d5832cf8f9b9\","
-        //               +   "\"included_segments\": [\"All\"],"
-        //               +   "\"data\": {\"foo\": \"bar\"},"
-        //               +   "\"contents\": {\"en\": \"English Message\"}"
-        //               + "}";
-
-        //     Log.i(Constants.TAGS.TAG, "strJsonBody:\n" + strJsonBody);
-
-        //     byte[] sendBytes = strJsonBody.getBytes("UTF-8");
-        //     con.setFixedLengthStreamingMode(sendBytes.length);
-
-        //     OutputStream outputStream = con.getOutputStream();
-        //     outputStream.write(sendBytes);
-
-        //     int httpResponse = con.getResponseCode();
-        //     Log.i(Constants.TAGS.TAG, "httpResponse: " + httpResponse);
-
-        //     if (  httpResponse >= HttpURLConnection.HTTP_OK && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
-        //         Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
-        //         jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-        //         scanner.close();
-        //     } else {
-        //         Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
-        //         jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-        //         scanner.close();
-        //     }
-
-        //     Log.i(Constants.TAGS.TAG, "jsonResponse:\n" + jsonResponse);
-
-        // } catch(Throwable t) {
-        //     Log.e(Constants.TAGS.TAG, t.toString(),t);
-        // }
     }
 }
 
