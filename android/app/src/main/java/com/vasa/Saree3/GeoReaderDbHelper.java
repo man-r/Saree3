@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class GeoReaderDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "Saree3.db";
 
     public static final String TABLE_NAME = "geo";
@@ -22,7 +22,7 @@ public class GeoReaderDbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
 
     private static final String SQL_CREATE_GEO =
-        "CREATE TABLE geo ( _id integer primary key autoincrement, playerid TEXT,latitude TEXT, longitude TEXT, altitude TEXT, speed TEXT, timestamp TIMESTAMP,createtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+        "CREATE TABLE geo ( _id integer primary key autoincrement, playerid TEXT, accuracy TEXT, latitude TEXT, longitude TEXT, altitude TEXT, speed TEXT, timestamp TIMESTAMP,createtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
 
     private static final String SQL_DELETE_GEO =
         "DROP TABLE IF EXISTS geo";
@@ -62,6 +62,7 @@ public class GeoReaderDbHelper extends SQLiteOpenHelper {
             HashMap<String,String> user = new HashMap<>();
             user.put("_id",cursor.getString(cursor.getColumnIndex("_id")));
             user.put("playerid",cursor.getString(cursor.getColumnIndex("playerid")));
+            user.put("accuracy",cursor.getString(cursor.getColumnIndex("accuracy")));
             user.put("latitude",cursor.getString(cursor.getColumnIndex("latitude")));
             user.put("longitude",cursor.getString(cursor.getColumnIndex("longitude")));
             user.put("altitude",cursor.getString(cursor.getColumnIndex("altitude")));

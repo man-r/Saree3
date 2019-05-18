@@ -103,6 +103,29 @@
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="accuracy : "
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/geo_list_item_accuracy"
+                    android:width="0dp"
+                    android:layout_weight="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:width="0dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="latitude : "
                     android:textSize="20dp"/>
 

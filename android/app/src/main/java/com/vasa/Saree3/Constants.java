@@ -29,6 +29,8 @@ public class Constants {
 
 	public interface NOTIFICATION {
 		public static final String CHANNEL_ID = "my_channel_01";
+		public static final String CHANNEL_NAME = "Saree3";
+		public static final String CHANNEL_DISCRIPTION = "Saree3";
 	}
 
 	public interface LOCATION {

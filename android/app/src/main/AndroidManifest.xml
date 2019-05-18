@@ -68,7 +68,7 @@
         <activity android:name=".GetPermission" />
 
         <service android:name=".MyService" />
-        
+
         <receiver
             android:name=".reciever.StartMyServiceAtBootReceiver"
             android:enabled="true"
@@ -79,6 +79,7 @@
         </receiver>
 
         <activity android:name=".FingerprintActivity" />
+        <activity android:name=".MapboxActivity"></activity>
     </application>
 
 </manifest>

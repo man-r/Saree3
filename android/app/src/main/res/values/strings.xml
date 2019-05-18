@@ -8,4 +8,8 @@
     <string name="chalange">chalange</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_db_view_activiy">DbViewActiviy</string>
+
+    <string name="title_activity_mapbox">MapboxActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

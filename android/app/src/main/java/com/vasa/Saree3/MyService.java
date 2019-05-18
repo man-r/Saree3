@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -139,7 +140,7 @@ public class MyService extends Service {
 
             if ((bestProvider != null) && (bestProvider.contains("gps"))){
                 CharSequence name = "Saree3";// The user-visible name of the channel.
-            
+
                 Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                     .setContentTitle("Saree3")
                     .setTicker("Saree3 Tracker")
@@ -147,7 +148,6 @@ public class MyService extends Service {
                     .setSmallIcon(R.drawable.notification_icon)
                     .setOnlyAlertOnce(true)
                     .setContentIntent(pendingIntent)
-                    .setOngoing(true)
                     .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
                     .setChannelId(CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
                     .build();
@@ -164,26 +164,22 @@ public class MyService extends Service {
             }
             else{
                 CharSequence name = "Saree3";// The user-visible name of the channel.
-            
-                Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                    .setContentTitle("No GPS!")
-                    .setTicker("No GPS!")
-                    .setContentText("Click to Enable GPS")
-                    .setSmallIcon(R.drawable.icon)
-                    .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
-                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0))
-                    .setOngoing(true)
-                    .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
-                    .setChannelId(CHANNEL_ID)
-                    .build();
 
-                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
-                    mChannel.setSound(null, null);
-                    mNotificationManager.createNotificationChannel(mChannel);
-                }
-                startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID)
+                        .setContentTitle("No GPS!")
+                        .setTicker("No GPS!")
+                        .setContentText("Click to Enable GPS")
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true)
+                        .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+
+                // notificationId is a unique int for each notification that you must define
+                notificationManager.notify(7, builder.build());
+
+
             }
 
 
@@ -242,6 +238,7 @@ public class MyService extends Service {
             // Create a new map of values, where column names are the keys
             ContentValues values = new ContentValues();
             values.put("playerid", android_id);
+            values.put("accuracy", loc.getAccuracy() + "");
             values.put("latitude", loc.getLatitude()+"");
             values.put("longitude", loc.getLongitude()+"");
             values.put("altitude", loc.getAltitude()+"");
@@ -257,6 +254,7 @@ public class MyService extends Service {
             Intent localIntent = new Intent();
             
             localIntent.setAction(Constants.ACTION.LOCATION_CHANGED_ACTION);
+            localIntent.putExtra("accuracy", loc.getAccuracy());
             localIntent.putExtra("altitude", loc.getAltitude());
             localIntent.putExtra("latitude", loc.getLatitude());
             localIntent.putExtra("longitude", loc.getLongitude());

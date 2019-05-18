@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 
 				            break;
 				        case R.id.map:
-				        	Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
+				        	Intent mapIntent = new Intent(getApplicationContext(), MapboxActivity.class);
 				            startActivityForResult(mapIntent, 0);
 				            break;
 				        case R.id.camera:
@@ -208,18 +208,25 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
             }
         );
 
-        Notification notification = new NotificationCompat.Builder(getApplicationContext(), Constants.NOTIFICATION.CHANNEL_ID)
-        	.setSmallIcon(R.drawable.notification_icon)
-	        .setContentTitle("Saree3")
-	        .setContentText("maxSpeed= " + maxSpeedValue + " Km/h")
-	        .setStyle(new NotificationCompat.BigTextStyle()
-	        .bigText("maxSpeed= " + maxSpeedValue + " Km/h"))
-	        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-	        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-			.setOnlyAlertOnce(true)
-	        .setOngoing(false)
-            .setChannelId(Constants.NOTIFICATION.CHANNEL_ID)
-            .build();
+        Manar.createNotifiation(getApplicationContext(),
+				Constants.NOTIFICATION.CHANNEL_ID,
+				Constants.NOTIFICATION.CHANNEL_NAME,
+				Constants.NOTIFICATION.CHANNEL_DISCRIPTION,
+				"Saree3",
+				"maxSpeed= " + maxSpeedValue + " Km/h"
+				);
+//        Notification notification = new NotificationCompat.Builder(getApplicationContext(), Constants.NOTIFICATION.CHANNEL_ID)
+//        	.setSmallIcon(R.drawable.notification_icon)
+//	        .setContentTitle("Saree3")
+//	        .setContentText("maxSpeed= " + maxSpeedValue + " Km/h")
+//	        .setStyle(new NotificationCompat.BigTextStyle()
+//	        .bigText("maxSpeed= " + maxSpeedValue + " Km/h"))
+//	        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//	        .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+//			.setOnlyAlertOnce(true)
+//	        .setOngoing(false)
+//            .setChannelId(Constants.NOTIFICATION.CHANNEL_ID)
+//            .build();
 
 		// check for permission
     	if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
