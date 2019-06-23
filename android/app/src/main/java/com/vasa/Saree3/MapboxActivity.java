@@ -281,7 +281,7 @@ public class MapboxActivity extends AppCompatActivity {
                     GeoReaderDbHelper mDbHelper = new GeoReaderDbHelper(activity);
                     SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-                    Cursor cursor = db.rawQuery ("SELECT * FROM geo", null);
+                    Cursor cursor = db.rawQuery ("SELECT * FROM geo  WHERE CAST(geo.accuracy as decimal) < 10 AND geo.createtime >= datetime('now', '-1 days') order by geo.createtime", null);
                     cursor.moveToFirst();
 
                     for (int i = 0; i < cursor.getCount(); i++) {
