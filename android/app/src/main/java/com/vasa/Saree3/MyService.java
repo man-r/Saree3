@@ -141,43 +141,61 @@ public class MyService extends Service {
             if ((bestProvider != null) && (bestProvider.contains("gps"))){
                 CharSequence name = "Saree3";// The user-visible name of the channel.
 
-                Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                    .setContentTitle("Saree3")
-                    .setTicker("Saree3 Tracker")
-                    .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-                    .setSmallIcon(R.drawable.notification_icon)
-                    .setOnlyAlertOnce(true)
-                    .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
-                    .setChannelId(CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
-                    .build();
-
-                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
-                    mChannel.setSound(null, null);
-                    mNotificationManager.createNotificationChannel(mChannel);
-                }
-                startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+                Manar.updateNotifiation(getApplicationContext(),
+                        Constants.NOTIFICATION.CHANNEL_ID,
+                        Constants.NOTIFICATION.CHANNEL_NAME,
+                        Constants.NOTIFICATION.CHANNEL_DISCRIPTION,
+                        "Saree3",
+                        "searching for signal",
+                        "Speed= NA Km/h\n" + "maxSpeed= " + maxSpeed + " Km/h",
+                        pstopIntent
+                );
+//                Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+//                    .setContentTitle("Saree3")
+//                    .setTicker("Saree3 Tracker")
+//                    .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+//                    .setSmallIcon(R.drawable.notification_icon)
+//                    .setOnlyAlertOnce(true)
+//                    .setContentIntent(pendingIntent)
+//                    .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
+//                    .setChannelId(CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
+//                    .build();
+//
+//                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                    NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+//                    mChannel.setSound(null, null);
+//                    mNotificationManager.createNotificationChannel(mChannel);
+//                }
+                //startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
                 locationManager.requestLocationUpdates(bestProvider, 0, Constants.LOCATION.MIN_DISTANCE, locationListener);
                 // Toast.makeText(this, "requestLocationUpdates", Toast.LENGTH_SHORT).show();
             }
             else{
                 CharSequence name = "Saree3";// The user-visible name of the channel.
 
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID)
-                        .setContentTitle("No GPS!")
-                        .setTicker("No GPS!")
-                        .setContentText("Click to Enable GPS")
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setContentIntent(pendingIntent)
-                        .setOngoing(true)
-                        .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent);
-
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-
-                // notificationId is a unique int for each notification that you must define
-                notificationManager.notify(7, builder.build());
+                Manar.updateNotifiation(getApplicationContext(),
+                        Constants.NOTIFICATION.CHANNEL_ID,
+                        Constants.NOTIFICATION.CHANNEL_NAME,
+                        Constants.NOTIFICATION.CHANNEL_DISCRIPTION,
+                        "No GPS!",
+                        "Click to Enable GPS",
+                        "maxSpeed= " + maxSpeed + " Km/h",
+                        pstopIntent
+                );
+//                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID)
+//                        .setContentTitle("No GPS!")
+//                        .setTicker("No GPS!")
+//                        .setContentText("Click to Enable GPS")
+//                        .setSmallIcon(R.drawable.notification_icon)
+//                        .setContentIntent(pendingIntent)
+//                        .setOngoing(true)
+//                        .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent);
+//
+//                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+//
+//                // notificationId is a unique int for each notification that you must define
+//                notificationManager.notify(7, builder.build());
 
 
             }
@@ -277,26 +295,35 @@ public class MyService extends Service {
                     topSpeed.edit().putString("lat", maxLat).putString("long", maxLong).putInt("topspeed", speed).apply();
                     
                     CharSequence name = "Saree3";// The user-visible name of the channel.
-                
-                    Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                        .setContentTitle("Saree3")
-                        .setTicker("Saree3 Tracker")
-                        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
-                        .setContentIntent(pendingIntent)
-                        .setOngoing(true)
-                        .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
-                        .setChannelId(CHANNEL_ID)
-                        .setOnlyAlertOnce(true).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
-                        .build();
 
-                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
-                        mChannel.setSound(null, null);
-                        mNotificationManager.createNotificationChannel(mChannel);
-                    }
+                    Manar.updateNotifiation(getApplicationContext(),
+                            Constants.NOTIFICATION.CHANNEL_ID,
+                            Constants.NOTIFICATION.CHANNEL_NAME,
+                            Constants.NOTIFICATION.CHANNEL_DISCRIPTION,
+                            "Saree3",
+                            "Speed= " + speed + " Km/h",
+                            "Speed= " + maxSpeed + " Km/h\n" + "maxSpeed= " + maxSpeed + " Km/h",
+                            pstopIntent
+                    );
+//                    Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+//                        .setContentTitle("Saree3")
+//                        .setTicker("Saree3 Tracker")
+//                        .setContentText("maxSpeed= " + maxSpeed + " Km/h")
+//                        .setSmallIcon(R.drawable.notification_icon)
+//                        .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+//                        .setContentIntent(pendingIntent)
+//                        .setOngoing(true)
+//                        .addAction(android.R.drawable.ic_media_next, "Stop", pstopIntent)
+//                        .setChannelId(CHANNEL_ID)
+//                        .setOnlyAlertOnce(true).setDefaults(Notification.DEFAULT_ALL).setGroupAlertBehavior(Notification.GROUP_ALERT_SUMMARY)
+//                        .build();
+//
+//                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+//                        mChannel.setSound(null, null);
+//                        mNotificationManager.createNotificationChannel(mChannel);
+//                    }
                         
                 }
             }            

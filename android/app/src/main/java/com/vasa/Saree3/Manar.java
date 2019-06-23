@@ -1,5 +1,6 @@
 package com.vasa.Saree3;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -57,7 +58,7 @@ public class Manar {
 
     }
 
-    public static void updateNotifiation(Context context, String CHANNEL_ID, String notificationTitle, String notificationContent) {
+    public static void updateNotifiation(Context context, String CHANNEL_ID, String CHANNEL_NAME, String CHANNEL_DISCRIPTION, String notificationTitle, String notificationContent, String bigText, PendingIntent action) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         // Create an explicit intent for an Activity in your app
@@ -72,6 +73,8 @@ public class Manar {
                 .setContentText(notificationContent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText))
+                .addAction(android.R.drawable.ic_media_next, "Stop", action)
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
