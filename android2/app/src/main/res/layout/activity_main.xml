@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Use DrawerLayout as root container for activity -->
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:stretchColumns="2"
+        >
+            <TableRow
+                android:gravity="center"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Speed"
+                        android:fontFamily="@font/digital"
+                        android:textSize="50sp"
+                        />
+                    <TextView
+                        android:id="@+id/currentspeed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textSize="100sp"
+                        android:text="0.0"
+                        android:padding="3dip"
+                        android:fontFamily="@font/digital"
+                        />
+                    <TextView
+                        android:id="@+id/currentspeedlatitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lat: -"
+                        android:fontFamily="@font/digital"
+                        />
+                    <TextView
+                        android:id="@+id/currentspeedlongitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lon: -"
+                        android:fontFamily="@font/digital"
+                        />
+                </LinearLayout>
+            </TableRow>
+            <TableRow
+                android:gravity="center"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Max Speed"
+                        android:fontFamily="@font/digital"
+                        android:textSize="50sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/maxspeed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/digital"
+                        android:gravity="center_horizontal"
+                        android:padding="3dip"
+                        android:text="0.0"
+                        android:textSize="100sp" />
+                    <TextView
+                        android:id="@+id/maxspeedlatitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lat: -"
+                        android:fontFamily="@font/digital"
+                        />
+                    <TextView
+                        android:id="@+id/maxspeedlongitude"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Lon: -"
+                        android:fontFamily="@font/digital"
+                        />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:gravity="center"
+                
+                >
+                <TextView
+                    android:id="@+id/maxSpeed"  
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="41sp"
+                    android:text="Saree3"
+                    android:gravity="center"
+                    android:fontFamily="@font/digital"
+                />
+                
+            </TableRow>
+            <TableRow
+                android:gravity="center"
+                
+                >
+                <TextView
+                    android:id="@+id/geopoints"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="41sp"
+                    android:text="Saree3"
+                    android:gravity="center"
+                    android:fontFamily="@font/digital"
+                />
+                
+            </TableRow>
+    </TableLayout>
+
+    <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/drawer_view"
+        app:headerLayout="@layout/nav_header" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

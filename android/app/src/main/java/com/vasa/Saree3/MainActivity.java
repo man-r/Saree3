@@ -18,6 +18,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -29,6 +30,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
+//import android.widget.Toast;
+//
+//import com.google.firebase.iid.FirebaseInstanceId;
 
 public class MainActivity extends AppCompatActivity  implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -246,6 +250,9 @@ public class MainActivity extends AppCompatActivity  implements ActivityCompat.O
 		registerReceiver(
 			mMessageReceiver, 
 			new IntentFilter(Constants.ACTION.LOCATION_CHANGED_ACTION));
+
+//		Toast.makeText(MainActivity.this, FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_LONG).show();
+//		Log.d(Constants.TAGS.TAG, FirebaseInstanceId.getInstance().getToken());
     }
 
     @Override
