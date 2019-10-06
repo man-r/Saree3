@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "39652438732",
+    "firebase_url": "https://saree3-1523520081957.firebaseio.com",
+    "project_id": "saree3-1523520081957",
+    "storage_bucket": "saree3-1523520081957.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39652438732:android:390d6b8111c44e4ac3c869",
+        "android_client_info": {
+          "package_name": "com.vasa.Saree3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "39652438732-lp17p3ivsatt5obtabo6tmkbvuurukg2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATDeeLr2VA36kAkI-ZwVlbr6a5fvThhi8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "39652438732-lp17p3ivsatt5obtabo6tmkbvuurukg2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
