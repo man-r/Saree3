@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.os.SystemClock;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import androidx.fragment.app.FragmentActivity;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
 import android.view.animation.Interpolator;
 
@@ -72,9 +72,9 @@ public class MapsActivity extends FragmentActivity
             StrictMode.setThreadPolicy(policy);
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment;
+//        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
         listPoint = new ArrayList<LatLng>();
     }
